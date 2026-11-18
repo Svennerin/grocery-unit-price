@@ -1,0 +1,1874 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Unit Price"><meta name="theme-color" content="#F4F1EA"><link rel="apple-touch-icon" href="icon-180.png"><link rel="manifest" href="manifest.webmanifest"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style></head><body><title>Grocery Unit Price Compare</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;700;800&display=swap">
+<style>
+/* Layout: one phone-width column; every screen fills the viewport, scan screens pin Retake/Done and the Fix it row to the same spot.
+   Tokens follow the Grocery Unit Price Compare design canvas (single light look). */
+:root {
+  --paper: #F4F1EA; --panel: #FBF9F4; --ink: #15161A; --muted: #5B5F66; --body2: #3A3E46;
+  --rule: #D9D4C8; --rule2: #CFC9BB; --stripe1: #E6E1D4; --stripe2: #EDE9DE; --cam: #0E0F12;
+  --d: #0B6B2D; --d-ink: #F2E91A; --d-tint: #E1F0E3;
+  --f: #A97A00; --f-ink: #15161A; --f-tint: #F3EAD0;
+  --display: 'Libre Franklin', 'Franklin Gothic Medium', Arial, sans-serif;
+  --body: 'Trebuchet MS', Verdana, sans-serif;
+  --mono: ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 16px; overflow: hidden; -webkit-text-size-adjust: 100%; }
+* { box-sizing: border-box; }
+button, input { font-family: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--f); outline-offset: 2px; }
+#app { position: relative; height: 100%; max-width: 430px; margin: 0 auto; overflow: hidden; }
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; overflow: hidden; }
+.pl { padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); }
+.pl20 { padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.disp { font-family: var(--display); font-weight: 700; letter-spacing: -0.01em; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.stripes { background: repeating-linear-gradient(135deg, var(--stripe1) 0, var(--stripe1) 12px, var(--stripe2) 12px, var(--stripe2) 24px); }
+img.ph { display: block; object-fit: cover; background: var(--stripe1); }
+.gcard img.ph { min-height: 0; }
+.tile img.ph { width: 100%; }
+.stripes.sm { background: repeating-linear-gradient(135deg, var(--stripe1) 0, var(--stripe1) 10px, var(--stripe2) 10px, var(--stripe2) 20px); }
+.chip { flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px; font: 600 14px var(--mono); display: inline-flex; align-items: center; justify-content: center; }
+.chip.sm { width: 24px; height: 24px; border-radius: 7px; font-size: 13px; }
+.chip.D { background: var(--d); color: var(--d-ink); }
+.chip.F { background: var(--f); color: var(--f-ink); }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* round icon buttons and pills */
+.xbtn { flex-shrink: 0; width: 48px; height: 48px; margin-left: -8px; border-radius: 50%; border: 0; padding: 0; background: rgba(21,22,26,0.08); display: flex; align-items: center; justify-content: center; }
+.back { flex-shrink: 0; width: 48px; height: 48px; margin-left: -8px; border: 0; padding: 0; background: none; display: flex; align-items: center; justify-content: center; }
+.pill { flex: 1; height: 52px; border-radius: 26px; border: 2px solid var(--ink); background: transparent; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 600; padding: 0; }
+.pill.solid { background: var(--ink); color: var(--paper); }
+.pill:disabled { border-color: var(--rule); background: var(--rule); color: var(--muted); cursor: default; }
+.fixrow { flex-shrink: 0; align-self: center; height: 44px; padding: 0 12px; display: flex; align-items: center; font-size: 15px; color: var(--muted); text-decoration: underline; border: 0; background: none; }
+.fixrow[aria-hidden="true"] { visibility: hidden; }
+
+/* home */
+#s-home { padding-block: 56px; }
+.home-row { flex: 1; display: flex; align-items: stretch; }
+.gtab { align-self: center; flex-shrink: 0; width: calc(44px + env(safe-area-inset-left, 0px)); padding-left: env(safe-area-inset-left, 0px); height: 168px; background: var(--stripe1); border: 0; border-radius: 0 22px 22px 0; display: flex; align-items: center; justify-content: center; }
+.home-mid { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+.shutter { width: 176px; height: 176px; border-radius: 50%; background: var(--ink); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 12px rgba(21,22,26,0.06); cursor: pointer; }
+.home-label { font-family: var(--display); font-weight: 600; font-size: 24px; letter-spacing: -0.01em; }
+.home-note { height: 40px; font-size: 14px; color: var(--muted); text-align: center; max-width: 260px; }
+
+/* scan screens */
+.scan { padding-top: 8px; padding-bottom: 12px; gap: 12px; }
+.topbar { flex-shrink: 0; height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.topbar h1 { margin: 0; font-size: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.table { flex-shrink: 0; display: flex; flex-direction: column; border-top: 1.5px solid var(--ink); }
+.trow { flex-shrink: 0; height: 42px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule); }
+.trow.tall { height: 59px; }
+.trow > .k { font-size: 14px; color: var(--muted); flex-shrink: 0; }
+.trow > .v { font-size: 18px; font-weight: 600; min-width: 0; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trow > .v.num { font-family: var(--mono); }
+.trow > .v.big { font-family: var(--mono); font-size: 20px; }
+.trow > .v.none { color: var(--muted); font-weight: 400; }
+.storev { display: flex; align-items: center; gap: 8px; }
+.pricev { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; min-width: 0; }
+.pricev .sub { font-family: var(--body); font-size: 13px; font-weight: 400; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.itemv { border: 0; background: none; padding: 0; height: 26px; display: flex; align-items: center; gap: 2px; font-size: 18px; font-weight: 600; min-width: 0; }
+.itemv span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: underline; text-decoration-color: var(--rule2); text-underline-offset: 3px; }
+.spacer17 { height: 17px; flex-shrink: 0; }
+.sk { display: inline-block; height: 22px; border-radius: 6px; background: var(--stripe1); animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { .sk { animation: none; } }
+.verdict { flex-shrink: 0; height: 96px; border-radius: 18px; padding: 10px 16px; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+.verdict .t { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -0.01em; }
+.verdict .s { font-size: 15px; color: var(--body2); }
+.verdict.D { border: 3px solid var(--d); background: var(--d-tint); }
+.verdict.F { border: 3px solid var(--f); background: var(--f-tint); }
+.verdict.even { border: 3px solid var(--rule2); background: var(--panel); }
+.verdict.dash { border: 2px dashed var(--muted); background: var(--panel); flex-direction: row; align-items: flex-start; gap: 12px; }
+.verdict.dash > div { display: flex; flex-direction: column; gap: 4px; }
+.verdict.skel { background: var(--stripe1); animation: pulse 1.4s ease-in-out infinite; }
+.btnrow { margin-top: auto; flex-shrink: 0; display: flex; gap: 12px; }
+
+/* which item */
+.readbox { flex-shrink: 0; height: 56px; border-radius: 14px; border: 2px dashed var(--muted); background: var(--panel); padding: 0 14px; display: flex; align-items: center; gap: 10px; }
+.readbox .m { font: 600 16px var(--mono); }
+.readbox .note { flex: 1; min-width: 0; text-align: right; font-size: 13px; color: var(--muted); }
+.matches { flex-shrink: 0; height: 198px; display: flex; flex-direction: column; gap: 8px; }
+.matches > .lbl { font-size: 14px; color: var(--muted); height: 18px; line-height: 18px; }
+.mrow { flex-shrink: 0; height: 52px; border-radius: 14px; border: 2px solid var(--rule); background: var(--panel); padding: 0 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px; text-align: left; }
+.mrow .n { display: block; font-size: 16px; font-weight: 600; line-height: 20px; }
+.mrow .c { display: block; font-size: 13px; line-height: 16px; color: var(--muted); }
+.nomatch { flex: 1; border-radius: 14px; border: 2px dashed var(--muted); background: var(--panel); padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+.browse { flex-shrink: 0; height: 48px; border-radius: 24px; border: 2px solid var(--rule); background: transparent; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; }
+
+/* gallery and categories */
+.scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+#s-gallery { padding-top: 20px; padding-bottom: 24px; gap: 20px; }
+.ghead { flex-shrink: 0; display: flex; align-items: center; gap: 4px; min-height: 48px; }
+.ghead .pick { font-size: 15px; color: var(--muted); }
+.ggrid { flex-shrink: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.gcard { height: 160px; border-radius: 18px; border: 2px solid var(--rule); background: var(--panel); overflow: hidden; display: flex; flex-direction: column; padding: 0; text-align: left; }
+.gcard .ph { flex: 1; width: 100%; }
+.gcard .lb { flex-shrink: 0; width: 100%; height: 50px; padding: 0 12px; border-top: 2px solid var(--rule); display: flex; align-items: center; font-size: 15px; line-height: 18px; font-weight: 600; }
+.backup { flex-shrink: 0; display: flex; justify-content: center; gap: 8px; }
+#s-cat, #s-detail { padding-top: 12px; padding-bottom: 16px; gap: 12px; }
+.chead { flex-shrink: 0; min-height: 56px; display: flex; align-items: center; gap: 4px; }
+.chead h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 24px; line-height: 28px; letter-spacing: -0.02em; white-space: pre-line; }
+.cgrid { flex-shrink: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 151px; gap: 12px; }
+.tile { border-radius: 18px; padding: 8px; display: flex; flex-direction: column; gap: 8px; background: var(--panel); text-align: left; min-width: 0; }
+.tile .ph { height: 56px; border-radius: 10px; flex-shrink: 0; }
+.tile .nm { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.tile .nm b { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile .nm span { font-size: 13px; color: var(--muted); }
+.tile .pr { display: flex; align-items: center; gap: 8px; }
+.tile .pr .mono { font-size: 14px; font-weight: 600; white-space: nowrap; }
+.tile.both-D { border: 3px solid var(--d); }
+.tile.both-F { border: 3px solid var(--f); }
+.tile.both-even { border: 3px solid var(--rule2); }
+.tile.one-D { border: 3px dotted var(--d); }
+.tile.one-F { border: 3px dotted var(--f); }
+.tile.none { border: 2px dashed var(--muted); padding: 9px; background: var(--paper); }
+
+/* detail */
+#s-detail .chead h1 { font-size: 30px; line-height: 34px; white-space: normal; }
+.dverdict { flex-shrink: 0; border-radius: 18px; padding: 10px 16px; display: flex; flex-direction: column; gap: 2px; }
+.dverdict .t { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -0.01em; }
+.dverdict .s { font-size: 15px; color: var(--body2); }
+.dverdict.D { background: var(--d-tint); } .dverdict.F { background: var(--f-tint); }
+.dverdict.even { background: var(--panel); border: 2px solid var(--rule2); }
+.dverdict.dash { border: 2px dashed var(--muted); background: var(--paper); }
+.dgrid { flex-shrink: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.dcard { border-radius: 18px; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: var(--panel); border: 2px solid var(--rule2); min-width: 0; }
+.dcard.win-D { border: 3px solid var(--d); padding: 14px; } .dcard.win-F { border: 3px solid var(--f); padding: 14px; }
+.dcard.empty { border: 2px dashed var(--muted); background: var(--paper); }
+.dcard .st { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; }
+.dcard .f { display: flex; flex-direction: column; gap: 2px; }
+.dcard .k { font-size: 13px; color: var(--muted); }
+.dcard .up { font: 600 24px var(--mono); white-space: nowrap; height: 32px; line-height: 32px; }
+.dcard .up small { font-size: 13px; font-weight: 500; }
+.dcard .noup { font-size: 18px; font-weight: 600; color: var(--muted); height: 32px; line-height: 32px; }
+.dcard .shelf { font: 500 16px var(--mono); }
+.dcard .foot { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+.dcard .when { font-size: 13px; color: var(--muted); height: 16px; line-height: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rescan { height: 44px; border-radius: 22px; border: 2px solid var(--ink); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.rescan.solid { background: var(--ink); color: var(--paper); border: 0; }
+
+/* sheets (Fix it, Restore) */
+.scrim { position: absolute; inset: 0; background: rgba(21,22,26,0.55); }
+.sheet { position: absolute; left: 0; right: 0; top: 40px; bottom: 0; background: var(--paper); border-radius: 24px 24px 0 0; padding-top: 10px; padding-bottom: 16px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+/* Safari tab on an iPhone 8 leaves ~513px for the sheet, less with the keyboard up: the sheet scrolls and Cancel/Save stay pinned */
+.sheet.split { overflow: hidden; }
+.sbody { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 10px; }
+.sheet.split > .btnrow { margin-top: 0; }
+.grab { align-self: center; flex-shrink: 0; width: 40px; height: 5px; border-radius: 3px; background: var(--rule); }
+.shead { flex-shrink: 0; height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.shead h1 { margin: 0; font-size: 22px; }
+.ilink { min-width: 0; height: 44px; display: flex; align-items: center; gap: 2px; color: var(--muted); border: 0; background: none; padding: 0; }
+.ilink span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; font-weight: 600; text-decoration: underline; }
+.fgroup { flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; }
+.fgroup > .lbl { font-size: 14px; color: var(--muted); height: 18px; line-height: 18px; }
+.seg2 { display: flex; gap: 10px; }
+.storebtn { flex: 1; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 17px; font-weight: 600; border: 2px solid var(--rule); background: transparent; color: var(--muted); padding: 0; }
+.storebtn[aria-pressed="true"].D { border-color: var(--d); background: var(--d-tint); color: var(--ink); }
+.storebtn[aria-pressed="true"].F { border-color: var(--f); background: var(--f-tint); color: var(--ink); }
+.hint { height: 34px; flex-shrink: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 17px; color: var(--muted); overflow: hidden; }
+.hint.tall { height: 44px; }
+.hint.warn { color: var(--ink); }
+.hint.warn.tall { align-items: center; }
+.hint > span { flex: 1; min-width: 0; }
+.hint > svg { flex: none; margin-top: 1px; }
+.usebtn { flex-shrink: 0; height: 44px; padding: 0 14px; border-radius: 22px; border: 2px solid var(--ink); background: transparent; font-size: 14px; font-weight: 600; }
+.stepbtn { flex-shrink: 0; width: 56px; height: 56px; border-radius: 14px; border: 2px solid var(--rule); background: var(--panel); display: flex; align-items: center; justify-content: center; padding: 0; }
+.field { flex: 1; min-width: 0; height: 56px; border-radius: 14px; border: 2px solid var(--rule); background: var(--panel); text-align: center; font: 600 24px var(--mono); color: var(--ink); padding: 0 8px; -webkit-appearance: none; appearance: none; }
+.field:focus { outline: none; border-color: var(--ink); }
+.field::placeholder { color: var(--muted); opacity: 1; }
+.field.bad { border: 2px solid var(--ink); }
+.field.empty { border: 2px dashed var(--muted); }
+.qtyrow { flex-shrink: 0; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+.qty { display: flex; gap: 8px; }
+.qty button { width: 44px; height: 44px; border-radius: 12px; border: 2px solid var(--rule); background: transparent; font: 600 16px var(--mono); padding: 0; }
+.qty button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.units { flex-shrink: 0; display: flex; height: 56px; border-radius: 14px; border: 2px solid var(--rule); overflow: hidden; background: var(--panel); }
+.units button { width: 44px; height: 52px; border: 0; background: transparent; font: 600 16px var(--mono); padding: 0; }
+.units button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.restore-ta { flex-shrink: 0; width: 100%; height: 180px; border-radius: 14px; border: 2px solid var(--rule); background: var(--panel); padding: 10px; font: 13px/1.4 var(--mono); resize: none; }
+#log { display: none; }
+</style>
+
+<div id="app">
+  <input type="file" id="cam" accept="image/*" capture="environment" class="vh" tabindex="-1" aria-hidden="true">
+
+  <section class="screen" id="s-home" aria-label="Home">
+    <div class="home-row">
+      <button class="gtab" id="openGallery" type="button" aria-label="Open items gallery">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <div class="home-mid">
+        <label class="shutter" for="cam" id="scanBtn" aria-label="Scan a price tag" data-scan="new">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#F4F1EA" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        </label>
+        <div class="home-label">Scan a price</div>
+      </div>
+      <div style="width: 44px; flex-shrink: 0"></div>
+    </div>
+  </section>
+
+  <section class="screen scan pl" id="s-scan" aria-label="Scanned price" hidden></section>
+  <section class="screen scan pl" id="s-match" aria-label="Which item?" hidden></section>
+  <section class="screen pl20 scroll" id="s-gallery" aria-label="Categories" hidden></section>
+  <section class="screen pl20 scroll" id="s-cat" hidden></section>
+  <section class="screen pl20 scroll" id="s-detail" hidden></section>
+
+  <div class="screen" id="fix" role="dialog" aria-modal="true" aria-label="Fix it" hidden>
+    <div class="scrim" id="fixScrim"></div>
+    <div class="sheet pl" id="fixSheet"></div>
+  </div>
+  <div class="screen" id="restore" role="dialog" aria-modal="true" aria-label="Restore backup" hidden>
+    <div class="scrim" id="restoreScrim"></div>
+    <div class="sheet pl" id="restoreSheet"></div>
+  </div>
+  <div id="log"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script src="tess/eng.js"></script>
+<script>
+(function () {
+  'use strict';
+  var MAX_SIDE = 1800;
+  var $ = function (id) { return document.getElementById(id); };
+  var logEl = $('log');
+  function log(m) { logEl.textContent += m + '\n'; }
+  document.addEventListener('securitypolicyviolation', function (e) { log('BLOCKED by page policy: ' + e.violatedDirective + ' -> ' + e.blockedURI); openDiag(); });
+  window.addEventListener('error', function (e) { log('error: ' + (e.message || e.target && e.target.src || 'unknown')); });
+  window.addEventListener('unhandledrejection', function (e) { log('rejection: ' + (e.reason && e.reason.message || e.reason)); });
+  function openDiag() { var d = document.querySelector('details'); if (d) d.open = true; }
+  log('Tesseract script present: ' + (typeof window.Tesseract));
+
+  /* ---------- OCR engine: tesseract.js in a worker; the language file is hosted with this page ---------- */
+  var engine = null;
+  var engineMs = 0;
+
+  function flattenWords(data) {
+    if (data.words && data.words.length) return data.words;
+    var out = [];
+    (data.blocks || []).forEach(function (b) {
+      (b.paragraphs || []).forEach(function (p) {
+        (p.lines || []).forEach(function (l) { (l.words || []).forEach(function (w) { out.push(w); }); });
+      });
+    });
+    return out;
+  }
+  function normWords(arr) {
+    return arr.map(function (w) {
+      var b = w.bbox || {};
+      return { text: String(w.text || '').trim(), conf: w.confidence || 0, x0: b.x0, y0: b.y0, x1: b.x1, y1: b.y1, h: (b.y1 - b.y0) };
+    }).filter(function (w) { return w.text; });
+  }
+
+  /* Put the bundled language file where Tesseract.js looks first (its own browser cache), so it never has to download it. */
+  function seedCache(bytes) {
+    return new Promise(function (resolve, reject) {
+      if (!window.indexedDB) { reject(new Error('This browser has no IndexedDB, so the bundled language file cannot be handed to the reader.')); return; }
+      var req = indexedDB.open('keyval-store');
+      req.onupgradeneeded = function () { if (!req.result.objectStoreNames.contains('keyval')) req.result.createObjectStore('keyval'); };
+      req.onerror = function () { reject(req.error || new Error('IndexedDB open failed')); };
+      req.onsuccess = function () {
+        var db = req.result;
+        if (!db.objectStoreNames.contains('keyval')) { db.close(); reject(new Error('Existing cache database has no keyval store.')); return; }
+        var tx = db.transaction('keyval', 'readwrite');
+        tx.objectStore('keyval').put(bytes, './eng.traineddata');
+        tx.oncomplete = function () { db.close(); log('language data placed in browser cache'); resolve(); };
+        tx.onerror = function () { reject(tx.error || new Error('IndexedDB write failed')); };
+      };
+    });
+  }
+
+  function makeTesseractEngine() {
+    return new Promise(function (resolve, reject) {
+      if (!window.Tesseract) { reject(new Error('The reader script did not load. Check the connection and reload.')); return; }
+      if (!window.ENG_B64) { reject(new Error('The bundled language file did not load.')); return; }
+      var bin = atob(window.ENG_B64), bytes = new Uint8Array(bin.length), k;
+      for (k = 0; k < bin.length; k++) bytes[k] = bin.charCodeAt(k);
+      log('language data bundled with the page: ' + (bytes.length / 1e6).toFixed(1) + ' MB');
+      var t0 = performance.now();
+      seedCache(bytes).then(function () {
+        return Tesseract.createWorker('eng', 1, {
+          corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/',
+          langPath: 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int',
+          cacheMethod: 'write',
+          logger: function (m) { if (m && m.status && m.status !== 'recognizing text') log(m.status + (m.progress != null ? ' ' + Math.round(m.progress * 100) + '%' : '')); }
+        });
+      }).then(function (worker) {
+        engineMs = performance.now() - t0;
+        resolve({
+          recognize: function (canvas, opts) {
+            return worker.setParameters({
+              tessedit_pageseg_mode: String(opts.psm || 6),
+              tessedit_char_whitelist: opts.whitelist || ''
+            }).then(function () { return worker.recognize(canvas, {}, { text: true, blocks: true, tsv: false, hocr: false }); })
+              .then(function (r) { return { text: r.data.text || '', words: normWords(flattenWords(r.data)), conf: r.data.confidence }; });
+          }
+        });
+      }).catch(reject);
+    });
+  }
+
+  /* ---------- image helpers ---------- */
+  function loadImage(file) {
+    if (window.createImageBitmap) {
+      return createImageBitmap(file, { imageOrientation: 'from-image' }).catch(function () { return viaImg(file); });
+    }
+    return viaImg(file);
+  }
+  function viaImg(file) {
+    return new Promise(function (res, rej) {
+      var u = URL.createObjectURL(file), im = new Image();
+      im.onload = function () { res(im); };
+      im.onerror = function () { rej(new Error('Could not open this image.')); };
+      im.src = u;
+    });
+  }
+  function toCanvas(img, maxSide) {
+    var w = img.width || img.naturalWidth, h = img.height || img.naturalHeight;
+    var s = Math.min(1, maxSide / Math.max(w, h));
+    var c = document.createElement('canvas');
+    c.width = Math.round(w * s); c.height = Math.round(h * s);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    return c;
+  }
+  function crop(c, x, y, w, h) {
+    x = Math.max(0, Math.round(x)); y = Math.max(0, Math.round(y));
+    w = Math.min(c.width - x, Math.round(w)); h = Math.min(c.height - y, Math.round(h));
+    var o = document.createElement('canvas'); o.width = Math.max(1, w); o.height = Math.max(1, h);
+    o.getContext('2d').drawImage(c, x, y, w, h, 0, 0, o.width, o.height);
+    return o;
+  }
+  function rgb2hsv(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn, h = 0;
+    if (d) {
+      if (mx === r) h = ((g - b) / d) % 6; else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4;
+      h *= 60; if (h < 0) h += 360;
+    }
+    return [h, mx ? d / mx : 0, mx];
+  }
+  /* red channel, Otsu threshold, white border: dark text on yellow or colour backgrounds becomes plain black on white */
+  function redOtsu(c, pad) {
+    var ctx = c.getContext('2d'), d = ctx.getImageData(0, 0, c.width, c.height), p = d.data, n = c.width * c.height;
+    var hist = new Array(256).fill(0), i;
+    for (i = 0; i < n; i++) hist[p[i * 4]]++;
+    var sum = 0, t; for (t = 0; t < 256; t++) sum += t * hist[t];
+    var sumB = 0, wB = 0, best = 0, thr = 128;
+    for (t = 0; t < 256; t++) {
+      wB += hist[t]; if (!wB) continue; var wF = n - wB; if (!wF) break;
+      sumB += t * hist[t]; var mB = sumB / wB, mF = (sum - sumB) / wF, v = wB * wF * (mB - mF) * (mB - mF);
+      if (v > best) { best = v; thr = t; }
+    }
+    var o = document.createElement('canvas'); o.width = c.width + pad * 2; o.height = c.height + pad * 2;
+    var octx = o.getContext('2d'); octx.fillStyle = '#fff'; octx.fillRect(0, 0, o.width, o.height);
+    var od = octx.getImageData(pad, pad, c.width, c.height), q = od.data;
+    for (i = 0; i < n; i++) { var v2 = p[i * 4] > thr ? 255 : 0; q[i * 4] = q[i * 4 + 1] = q[i * 4 + 2] = v2; q[i * 4 + 3] = 255; }
+    octx.putImageData(od, pad, pad);
+    return o;
+  }
+
+  /* ---------- Dollarama detection: a wide yellow band with a green arrow at its left ---------- */
+  function findBand(c) {
+    var sw = 320, s = sw / c.width, sh = Math.max(1, Math.round(c.height * s));
+    var sm = document.createElement('canvas'); sm.width = sw; sm.height = sh;
+    var sctx = sm.getContext('2d'); sctx.drawImage(c, 0, 0, sw, sh);
+    var px = sctx.getImageData(0, 0, sw, sh).data, n = sw * sh;
+    var mask = new Uint8Array(n), green = new Uint8Array(n), i;
+    for (i = 0; i < n; i++) {
+      var hsv = rgb2hsv(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]);
+      if (hsv[0] >= 44 && hsv[0] <= 76 && hsv[1] >= 0.47 && hsv[2] >= 0.59) mask[i] = 1;
+      if (hsv[0] >= 100 && hsv[0] <= 170 && hsv[1] >= 0.4 && hsv[2] >= 0.25) green[i] = 1;
+    }
+    var seen = new Uint8Array(n), stack = new Int32Array(n), best = null;
+    for (i = 0; i < n; i++) {
+      if (!mask[i] || seen[i]) continue;
+      var sp = 0, cnt = 0, x0 = sw, x1 = 0, y0 = sh, y1 = 0; stack[sp++] = i; seen[i] = 1;
+      while (sp) {
+        var k = stack[--sp], x = k % sw, y = (k / sw) | 0; cnt++;
+        if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+        if (x > 0 && mask[k - 1] && !seen[k - 1]) { seen[k - 1] = 1; stack[sp++] = k - 1; }
+        if (x < sw - 1 && mask[k + 1] && !seen[k + 1]) { seen[k + 1] = 1; stack[sp++] = k + 1; }
+        if (y > 0 && mask[k - sw] && !seen[k - sw]) { seen[k - sw] = 1; stack[sp++] = k - sw; }
+        if (y < sh - 1 && mask[k + sw] && !seen[k + sw]) { seen[k + sw] = 1; stack[sp++] = k + sw; }
+      }
+      if (!best || cnt > best.cnt) best = { cnt: cnt, x0: x0, x1: x1, y0: y0, y1: y1 };
+    }
+    if (!best) return null;
+    var bw = best.x1 - best.x0 + 1, bh = best.y1 - best.y0 + 1;
+    if (bw < sw * 0.25 || bw / bh < 2.2 || best.cnt < bw * bh * 0.5) return { band: false, why: 'no wide yellow band' };
+    var gx0 = Math.max(0, best.x0 - Math.round(bw * 0.12)), gx1 = Math.min(sw - 1, best.x0 + Math.round(bw * 0.25));
+    var gy0 = Math.max(0, best.y0 - Math.round(bh * 0.2)), gy1 = Math.min(sh - 1, best.y1 + Math.round(bh * 0.2)), g = 0, area = 0, gx, gy;
+    for (gy = gy0; gy <= gy1; gy++) for (gx = gx0; gx <= gx1; gx++) { area++; if (green[gy * sw + gx]) g++; }
+    var arrow = g / area;
+    return { band: true, arrow: arrow >= 0.04, arrowShare: arrow, x: best.x0 / s, y: best.y0 / s, w: bw / s, h: bh / s };
+  }
+
+  /* ---------- parsing ---------- */
+  var LOOK = { G: '6', B: '8', O: '0', I: '1', S: '5', l: '1' };
+  function parseSize(text) {
+    var t = String(text).toUpperCase().replace(/[—–]/g, ' ');
+    var re = /(^|[^A-Z0-9.])([0-9GBOIS]{1,4}(?:\.[0-9]+)?)\s?(ML|KG|G|L)(?![A-Z0-9])/g, m, found = null;
+    while ((m = re.exec(t))) {
+      var raw = m[2], num = raw.replace(/[GBOIS]/g, function (ch) { return LOOK[ch]; });
+      var unit = m[3].toLowerCase();
+      var v = parseFloat(num); if (!isFinite(v) || v <= 0) continue;
+      if (!/[0-9]/.test(raw)) { /* all look-alike letters, e.g. GBOML = 680 ml: only accept when plausible */
+        if (raw.length < 3) continue;
+        if ((unit === 'l' && v > 20) || (unit === 'kg' && v > 20) || ((unit === 'g' || unit === 'ml') && (v < 20 || v > 5000))) continue;
+      }
+      found = { value: v, unit: m[3].toLowerCase(), raw: m[2] + m[3], fixed: raw !== num };
+      break;
+    }
+    return found;
+  }
+  /* size text on Farm Boy labels is small: "425 g", "540 ml", "1.89 L". Accept the usual slips (mi / m1 for ml, 1 or I for L) and take the last match, which is the bottom-right one. */
+  function parseSizeLoose(text) {
+    var t = String(text).replace(/[—–]/g, ' ').replace(/,/g, '.');
+    var re = /(^|[^0-9A-Za-z.$])(\d{1,4}(?:\.\d{1,3})?)\s?(kg|ml|mil|mi|mt|m1|g|l|1|I|\|)(?![A-Za-z0-9])/gi, m, best = null;
+    while ((m = re.exec(t))) {
+      var num = parseFloat(m[2]), u = m[3].toLowerCase(), unit, fixed = false;
+      if (!isFinite(num) || num <= 0) continue;
+      if (u === 'kg') unit = 'kg';
+      else if (u === 'g') unit = 'g';
+      else if (u === 'ml') unit = 'ml';
+      else if (u === 'mi' || u === 'mt' || u === 'm1' || u === 'mil') unit = 'ml';
+      else if (u === 'l') unit = 'l';
+      else { if (!/\./.test(m[2])) continue; unit = 'l'; fixed = true; }
+      if ((unit === 'kg' || unit === 'l') && num > 20) continue;
+      if ((unit === 'g' || unit === 'ml') && (num < 20 || num > 5000)) continue;
+      best = { value: num, unit: unit, raw: m[0].trim(), rawNum: m[2], fixed: fixed };
+    }
+    return best;
+  }
+  /* litre sizes in italic type often lose the decimal point or the L: "189 L", "1891" for 1.89 L. Only tried when nothing else parsed. */
+  function parseLitreGarble(text) {
+    var t = String(text).replace(/,/g, '.'), m = /(?:^|[^0-9A-Za-z])(\d)\.?(\d{2})\s?[lL1I](?![A-Za-z0-9])/.exec(t);
+    if (!m) return null;
+    var v = parseFloat(m[1] + '.' + m[2]);
+    return v >= 0.2 && v <= 9.99 ? { value: v, unit: 'l', raw: m[0].trim(), rawNum: m[1] + '.' + m[2], fixed: true } : null;
+  }
+  function parseSizeAny(text) { return parseSizeLoose(text) || parseLitreGarble(text); }
+  /* Digits in tiny italic size text get confused (1.89 read as 1.39). A glyph with two counters is an 8 whatever the OCR said, so line the OCR'd digits up with the glyphs on the size line and fix those. Only acts when the glyph count matches exactly. */
+  function makeDigitRepairer(crop) {
+    var s = scaled(crop, 3), P = greenPlane(s, 100000), m = inkMask(P, 60 / P.w, 15, 170), C = components(m, P.w, P.h, 10), lines = null;
+    var gl = C.list.filter(function (c) { var h = c.y1 - c.y0, w = c.x1 - c.x0; return h >= 0.08 * P.h && h <= 0.6 * P.h && w / h <= 1.7 && c.x0 > 2 && c.x1 < P.w - 2 && c.y0 > 2 && c.y1 < P.h - 2; });
+    gl.sort(function (a, b) { return (a.y0 + a.y1) - (b.y0 + b.y1); });
+    lines = [];
+    gl.forEach(function (g) {
+      var cy = (g.y0 + g.y1) / 2, L = null;
+      lines.forEach(function (l) { if (Math.abs(l.cy - cy) < 0.45 * Math.max(g.y1 - g.y0, l.h)) L = l; });
+      if (!L) { L = { cy: cy, h: g.y1 - g.y0, g: [] }; lines.push(L); }
+      L.g.push(g); L.cy = mean(L.g, gcy); L.h = Math.max.apply(null, L.g.map(gh));
+    });
+    lines.sort(function (a, b) { return b.cy - a.cy; });
+    var holeCache = {};
+    function holes(g) { return holeCache[g.id] === undefined ? (holeCache[g.id] = holesOf(C.lab, P.w, g)) : holeCache[g.id]; }
+    return function (size) {
+      if (!size || !size.rawNum) return size;
+      var nd = size.rawNum.replace(/[^0-9]/g, '').length, nl = size.unit === 'ml' || size.unit === 'kg' ? 2 : 1, i, k, matched = false;
+      for (i = 0; i < lines.length; i++) {
+        var L = lines[i], big = L.g.filter(function (g) { return gh(g) >= 0.55 * L.h; }).sort(function (a, b) { return a.x0 - b.x0; });
+        if (big.length !== nd + nl) continue;
+        matched = true;
+        var digits = size.rawNum.replace(/[^0-9]/g, '').split(''), changed = false;
+        for (k = 0; k < nd; k++) {
+          var hk = holes(big[k]);
+          if (hk >= 2 && digits[k] !== '8') { digits[k] = '8'; changed = true; }
+          else if (hk === 0 && digits[k] === '8') { digits[k] = '3'; changed = true; }
+        }
+        if (!changed) { size.unchecked = false; return size; }
+        var di = 0, rn = size.rawNum.replace(/[0-9]/g, function () { return digits[di++]; }), v = parseFloat(rn);
+        return isFinite(v) ? { value: v, unit: size.unit, raw: size.raw, rawNum: rn, fixed: true } : size;
+      }
+      if (!matched) size.unchecked = true;
+      return size;
+    };
+  }
+  /* bounding box (in crop pixels) of the text line with the most glyphs, so size OCR is not thrown by the empty tag around it */
+  function sizeLineBox(crop) {
+    var k = 3, s = scaled(crop, k), P = greenPlane(s, 100000), m = inkMask(P, 60 / P.w, 15, 170), C = components(m, P.w, P.h, 10), lines = [];
+    C.list.filter(function (c) { var h = c.y1 - c.y0, w = c.x1 - c.x0; return h >= 0.08 * P.h && h <= 0.6 * P.h && w / h <= 1.7 && c.x0 > 2 && c.x1 < P.w - 2 && c.y0 > 2 && c.y1 < P.h - 2; })
+      .sort(function (a, b) { return (a.y0 + a.y1) - (b.y0 + b.y1); })
+      .forEach(function (g) {
+        var cy = (g.y0 + g.y1) / 2, L = null;
+        lines.forEach(function (l) { if (Math.abs(l.cy - cy) < 0.45 * Math.max(g.y1 - g.y0, l.h)) L = l; });
+        if (!L) { L = { cy: cy, h: g.y1 - g.y0, g: [] }; lines.push(L); }
+        L.g.push(g); L.cy = mean(L.g, gcy); L.h = Math.max.apply(null, L.g.map(gh));
+      });
+    var best = null;
+    lines.forEach(function (l) { if (l.g.length >= 3 && (!best || l.g.length > best.g.length)) best = l; });
+    if (!best) return null;
+    var x0 = Math.min.apply(null, best.g.map(function (g) { return g.x0; })), x1 = Math.max.apply(null, best.g.map(function (g) { return g.x1; })),
+      y0 = Math.min.apply(null, best.g.map(function (g) { return g.y0; })), y1 = Math.max.apply(null, best.g.map(function (g) { return g.y1; })), mg = 0.6 * best.h;
+    return { x0: Math.max(0, (x0 - mg) / k), y0: Math.max(0, (y0 - mg) / k), x1: Math.min(crop.width, (x1 + mg) / k), y1: Math.min(crop.height, (y1 + mg) / k) };
+  }
+  function parsePrice(text) {
+    var t = String(text).replace(/\s+/g, '');
+    var m = /(\d)\/\$?(\d+[.,]\d{2})/.exec(t);
+    if (m) { var total = parseFloat(m[2].replace(',', '.')), q = parseInt(m[1], 10); return { qty: q, total: total, each: total / q, multi: true }; }
+    m = /\$?(\d{1,3}[.,]\d{2})/.exec(t);
+    if (m) { var v = parseFloat(m[1].replace(',', '.')); return { qty: 1, total: v, each: v, multi: false }; }
+    return null;
+  }
+  function money(v) { return '$' + v.toFixed(2); }
+  function unitPrice(price, size) {
+    if (!price || !size) return null;
+    if (size.unit === 'g') return { v: price.each / size.value * 100, per: '100 g' };
+    if (size.unit === 'kg') return { v: price.each / size.value / 10, per: '100 g' };
+    if (size.unit === 'ml') return { v: price.each / size.value * 1000, per: 'L' };
+    return { v: price.each / size.value, per: 'L' };
+  }
+  function groupLines(words) {
+    var ws = words.filter(function (w) { return w.h > 0 && w.conf >= 40 && /[A-Za-z0-9]/.test(w.text); }).sort(function (a, b) { return a.y0 - b.y0; }), lines = [];
+    ws.forEach(function (w) {
+      var cy = (w.y0 + w.y1) / 2, L = null;
+      lines.forEach(function (l) { if (Math.abs(l.cy - cy) < Math.min(w.h, l.h) * 0.5) L = l; });
+      if (!L) { L = { cy: cy, h: w.h, words: [] }; lines.push(L); }
+      L.words.push(w);
+    });
+    lines.forEach(function (l) { l.words.sort(function (a, b) { return a.x0 - b.x0; }); l.text = l.words.map(function (w) { return w.text; }).join(' '); l.y = l.cy; });
+    return lines.sort(function (a, b) { return a.y - b.y; });
+  }
+  function dbg(name, cv) { try { if (window.__DBG) window.__DBG.push([name, cv.toDataURL('image/png')]); } catch (e) {} }
+  function chanOtsu(c, pad, ch, scale) {
+    var w = Math.max(1, Math.round(c.width * (scale || 1))), h = Math.max(1, Math.round(c.height * (scale || 1)));
+    var s = document.createElement('canvas'); s.width = w; s.height = h; s.getContext('2d').drawImage(c, 0, 0, w, h);
+    var ctx = s.getContext('2d'), d = ctx.getImageData(0, 0, w, h), p = d.data, n = w * h, hist = new Array(256).fill(0), i;
+    for (i = 0; i < n; i++) hist[p[i * 4 + ch]]++;
+    var sum = 0, t; for (t = 0; t < 256; t++) sum += t * hist[t];
+    var sumB = 0, wB = 0, best = 0, thr = 128;
+    for (t = 0; t < 256; t++) {
+      wB += hist[t]; if (!wB) continue; var wF = n - wB; if (!wF) break;
+      sumB += t * hist[t]; var mB = sumB / wB, mF = (sum - sumB) / wF, v = wB * wF * (mB - mF) * (mB - mF);
+      if (v > best) { best = v; thr = t; }
+    }
+    var o = document.createElement('canvas'); o.width = w + pad * 2; o.height = h + pad * 2;
+    var octx = o.getContext('2d'); octx.fillStyle = '#fff'; octx.fillRect(0, 0, o.width, o.height);
+    var od = octx.getImageData(pad, pad, w, h), q = od.data;
+    for (i = 0; i < n; i++) { var v2 = p[i * 4 + ch] > thr ? 255 : 0; q[i * 4] = q[i * 4 + 1] = q[i * 4 + 2] = v2; q[i * 4 + 3] = 255; }
+    octx.putImageData(od, pad, pad);
+    return o;
+  }
+  /* one colour channel as a grey picture, enlarged, with a flat border; Tesseract then binarises it itself */
+  function grayCanvas(c, scale, ch, pad) {
+    var s = scaled(c, scale), w = s.width, h = s.height, d = s.getContext('2d').getImageData(0, 0, w, h).data, i, sum = 0;
+    for (i = 0; i < w * h; i++) sum += d[i * 4 + ch];
+    var mean = Math.round(sum / (w * h)), o = document.createElement('canvas'); o.width = w + pad * 2; o.height = h + pad * 2;
+    var octx = o.getContext('2d'); octx.fillStyle = 'rgb(' + mean + ',' + mean + ',' + mean + ')'; octx.fillRect(0, 0, o.width, o.height);
+    var od = octx.getImageData(pad, pad, w, h), q = od.data;
+    for (i = 0; i < w * h; i++) { var v = d[i * 4 + ch]; q[i * 4] = q[i * 4 + 1] = q[i * 4 + 2] = v; q[i * 4 + 3] = 255; }
+    octx.putImageData(od, pad, pad);
+    return o;
+  }
+  /* text darker than its own neighbourhood (radius rpx, in enlarged pixels), black on white: survives shelf stripes and uneven light */
+  function inkCanvas(c, scale, rpx, delta) {
+    var s = scaled(c, scale), P = greenPlane(s, 100000), m = inkMask(P, rpx / P.w, delta, 170), pad = 14;
+    var o = document.createElement('canvas'); o.width = P.w + pad * 2; o.height = P.h + pad * 2;
+    var octx = o.getContext('2d'); octx.fillStyle = '#fff'; octx.fillRect(0, 0, o.width, o.height);
+    var od = octx.getImageData(pad, pad, P.w, P.h), q = od.data, i;
+    for (i = 0; i < P.w * P.h; i++) { var v = m[i] ? 0 : 255; q[i * 4] = q[i * 4 + 1] = q[i * 4 + 2] = v; q[i * 4 + 3] = 255; }
+    octx.putImageData(od, pad, pad);
+    return o;
+  }
+  function scaled(c, f) {
+    if (f === 1) return c;
+    var o = document.createElement('canvas'); o.width = Math.max(1, Math.round(c.width * f)); o.height = Math.max(1, Math.round(c.height * f));
+    o.getContext('2d').drawImage(c, 0, 0, o.width, o.height); return o;
+  }
+
+  /* ---------- Farm Boy: find the price digits by shape, read them one glyph at a time ---------- */
+  function greenPlane(c, maxSide) {
+    var s = Math.min(1, maxSide / Math.max(c.width, c.height));
+    var w = Math.max(1, Math.round(c.width * s)), h = Math.max(1, Math.round(c.height * s));
+    var sm = document.createElement('canvas'); sm.width = w; sm.height = h;
+    var sctx = sm.getContext('2d'); sctx.drawImage(c, 0, 0, w, h);
+    var d = sctx.getImageData(0, 0, w, h).data, g = new Uint8Array(w * h), i;
+    for (i = 0; i < w * h; i++) g[i] = d[i * 4 + 1];
+    return { w: w, h: h, g: g, s: w / c.width };
+  }
+  /* "ink" = clearly darker than its own neighbourhood. Works on white, yellow, grey and kraft paper alike, and ignores big dark shelves. */
+  function inkMask(P, winFrac, delta, hard) {
+    var w = P.w, h = P.h, g = P.g, r = Math.max(7, Math.round(w * winFrac)) >> 0;
+    var W1 = w + 1, I = new Uint32Array(W1 * (h + 1)), x, y;
+    for (y = 0; y < h; y++) { var row = 0; for (x = 0; x < w; x++) { row += g[y * w + x]; I[(y + 1) * W1 + x + 1] = I[y * W1 + x + 1] + row; } }
+    var m = new Uint8Array(w * h);
+    for (y = 0; y < h; y++) {
+      var y0 = Math.max(0, y - r), y1 = Math.min(h, y + r + 1);
+      for (x = 0; x < w; x++) {
+        var v = g[y * w + x]; if (v >= hard) continue;
+        var x0 = Math.max(0, x - r), x1 = Math.min(w, x + r + 1);
+        var sum = I[y1 * W1 + x1] - I[y0 * W1 + x1] - I[y1 * W1 + x0] + I[y0 * W1 + x0];
+        if (v < sum / ((x1 - x0) * (y1 - y0)) - delta) m[y * w + x] = 1;
+      }
+    }
+    return m;
+  }
+  function components(m, w, h, minH) {
+    var lab = new Int32Array(w * h), stack = new Int32Array(w * h), list = [], id = 0, i;
+    for (i = 0; i < w * h; i++) {
+      if (!m[i] || lab[i]) continue;
+      id++; var sp = 0, x0 = w, x1 = 0, y0 = h, y1 = 0, area = 0; stack[sp++] = i; lab[i] = id;
+      while (sp) {
+        var k = stack[--sp], x = k % w, y = (k / w) | 0; area++;
+        if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+        for (var dy = -1; dy <= 1; dy++) {
+          var yy = y + dy; if (yy < 0 || yy >= h) continue;
+          for (var dx = -1; dx <= 1; dx++) {
+            var xx = x + dx; if (xx < 0 || xx >= w) continue;
+            var kk = yy * w + xx; if (m[kk] && !lab[kk]) { lab[kk] = id; stack[sp++] = kk; }
+          }
+        }
+      }
+      if (y1 - y0 + 1 >= minH) list.push({ id: id, x0: x0, y0: y0, x1: x1 + 1, y1: y1 + 1, area: area });
+    }
+    return { lab: lab, list: list };
+  }
+  function holesOf(lab, w, c) {
+    var bw = c.x1 - c.x0 + 2, bh = c.y1 - c.y0 + 2, a = new Uint8Array(bw * bh), x, y;
+    for (y = c.y0; y < c.y1; y++) for (x = c.x0; x < c.x1; x++) if (lab[y * w + x] === c.id) a[(y - c.y0 + 1) * bw + (x - c.x0 + 1)] = 1;
+    var seen = new Uint8Array(bw * bh), stack = new Int32Array(bw * bh), holes = 0, i;
+    for (i = 0; i < bw * bh; i++) {
+      if (a[i] || seen[i]) continue;
+      var sp = 0, n = 0, edge = false; stack[sp++] = i; seen[i] = 1;
+      while (sp) {
+        var k = stack[--sp], kx = k % bw, ky = (k / bw) | 0; n++;
+        if (kx === 0 || ky === 0 || kx === bw - 1 || ky === bh - 1) edge = true;
+        if (kx > 0 && !a[k - 1] && !seen[k - 1]) { seen[k - 1] = 1; stack[sp++] = k - 1; }
+        if (kx < bw - 1 && !a[k + 1] && !seen[k + 1]) { seen[k + 1] = 1; stack[sp++] = k + 1; }
+        if (ky > 0 && !a[k - bw] && !seen[k - bw]) { seen[k - bw] = 1; stack[sp++] = k - bw; }
+        if (ky < bh - 1 && !a[k + bw] && !seen[k + bw]) { seen[k + bw] = 1; stack[sp++] = k + bw; }
+      }
+      if (!edge && n >= Math.max(6, 0.012 * bw * bh)) holes++;
+    }
+    return holes;
+  }
+  /* one glyph as black on white, optionally de-slanted (italic digits), scaled to a height Tesseract likes */
+  function glyphCanvas(lab, w, c, k, targetH) {
+    var bw = c.x1 - c.x0, bh = c.y1 - c.y0, src = document.createElement('canvas'); src.width = bw; src.height = bh;
+    var sctx = src.getContext('2d'), im = sctx.createImageData(bw, bh), d = im.data, x, y;
+    for (y = 0; y < bh; y++) for (x = 0; x < bw; x++) { var v = lab[(c.y0 + y) * w + c.x0 + x] === c.id ? 0 : 255, o = (y * bw + x) * 4; d[o] = d[o + 1] = d[o + 2] = v; d[o + 3] = 255; }
+    sctx.putImageData(im, 0, 0);
+    var sc = targetH / bh, pad = 24, sh = Math.abs(k) * targetH;
+    var out = document.createElement('canvas'); out.width = Math.round(bw * sc + sh) + pad * 2; out.height = Math.round(targetH) + pad * 2;
+    var octx = out.getContext('2d'); octx.fillStyle = '#fff'; octx.fillRect(0, 0, out.width, out.height);
+    octx.setTransform(1, 0, k, 1, pad + sh / 2 - k * targetH / 2, pad);
+    octx.drawImage(src, 0, 0, bw * sc, targetH);
+    return out;
+  }
+  /* read one digit glyph. Counters narrow the choice: two counters = 8; one = 0, 4, 6 or 9; none = 1, 2, 3, 5 or 7. If that fails (a counter filled in by blur), read it unrestricted. */
+  function readDigit(eng, S, c) {
+    var holes = holesOf(S.lab, S.w, c), clipped = c.x0 <= 1 || c.x1 >= S.w - 1;
+    if (holes >= 2) return Promise.resolve({ d: '8', conf: 92, how: 'two counters' });
+    var plans = [];
+    if (!clipped) plans.push({ wl: holes === 1 ? '0469' : '123457', ks: [0, 0.2, 0.3], how: holes ? 'one counter' : 'no counter' });
+    plans.push({ wl: '0123456789', ks: [0, 0.2, 0.3], how: clipped ? 'clipped at photo edge' : 'unrestricted' });
+    var best = null, pi = 0;
+    function nextPlan() {
+      if ((best && best.conf >= 60) || pi >= plans.length) return Promise.resolve(best);
+      var pl = plans[pi++], i = 0, planBest = null;
+      function nextK() {
+        if (i >= pl.ks.length || (planBest && planBest.conf >= 85)) return Promise.resolve();
+        var k = pl.ks[i++];
+        var gc = glyphCanvas(S.lab, S.w, c, k, 80);
+        function take(r) {
+          var t = r.text.replace(/[^0-9]/g, ''), cf = r.words.length ? r.words[0].conf : (typeof r.conf === 'number' ? r.conf : 65);
+          if (t.length === 1 && (!planBest || cf > planBest.conf)) planBest = { d: t, conf: cf, how: pl.how, clipped: clipped };
+          return t.length === 1;
+        }
+        /* psm 10 (single character) sometimes returns nothing for a clean digit; psm 8 (single word) then reads it */
+        return eng.recognize(gc, { psm: 10, whitelist: pl.wl }).then(function (r) {
+          if (take(r)) return nextK();
+          return eng.recognize(gc, { psm: 8, whitelist: pl.wl }).then(function (r2) { take(r2); return nextK(); });
+        });
+      }
+      return nextK().then(function () { if (planBest && (!best || planBest.conf > best.conf)) best = planBest; return nextPlan(); });
+    }
+    return nextPlan().then(function (b) { if (!b && window.__DBG) dbg('glyphfail_' + c.x0 + '_' + c.y0, glyphCanvas(S.lab, S.w, c, 0, 80)); return b || { d: '?', conf: 0, how: clipped ? 'clipped at photo edge' : 'unread', clipped: clipped }; });
+  }
+  function gh(g) { return g.y1 - g.y0; }
+  function gw(g) { return g.x1 - g.x0; }
+  function gcy(g) { return (g.y0 + g.y1) / 2; }
+  function mean(a, f) { var s = 0; a.forEach(function (x) { s += f(x); }); return s / a.length; }
+  function chainRuns(gl) {
+    var s = gl.slice().sort(function (a, b) { return a.x0 - b.x0; }), used = [], runs = [], i, j;
+    for (i = 0; i < s.length; i++) {
+      if (used[i]) continue;
+      var run = [s[i]]; used[i] = true;
+      for (j = i + 1; j < s.length; j++) {
+        if (used[j]) continue;
+        var p = run[run.length - 1], q = s[j], ha = mean(run, gh), wa = mean(run, gw), cy = mean(run, gcy), gap = q.x0 - p.x1;
+        if (Math.abs(gh(q) - ha) <= 0.2 * ha && Math.abs(gcy(q) - cy) <= 0.2 * ha && gap >= -0.1 * wa && gap <= 1.0 * wa) { run.push(q); used[j] = true; }
+      }
+      runs.push(run);
+    }
+    return runs;
+  }
+  function box(a) {
+    return { x0: Math.min.apply(null, a.map(function (g) { return g.x0; })), y0: Math.min.apply(null, a.map(function (g) { return g.y0; })),
+      x1: Math.max.apply(null, a.map(function (g) { return g.x1; })), y1: Math.max.apply(null, a.map(function (g) { return g.y1; })) };
+  }
+  /* returns a promise of {text, value, kind, conf, digits, dollars:box, cents:box|null, all:box, gh} or null */
+  function findPrice(eng, S) {
+    var H = S.h, i, j;
+    var gl = S.list.filter(function (c) {
+      var h = gh(c), w = gw(c), r = w / h, f = c.area / (w * h);
+      return h >= 0.035 * H && h <= 0.4 * H && r >= 0.15 && r <= 1.5 && f >= 0.15 && f <= 0.92;
+    });
+    var runs = chainRuns(gl), cands = [];
+    if (S.log) S.log.push('glyph candidates ' + gl.length + ', runs ' + runs.map(function (r) { return r.length + 'x' + Math.round(mean(r, gh)); }).join(' '));
+    runs.forEach(function (R) {
+      var bx = box(R), ha = mean(R, gh);
+      if (R.length >= 3 && R.length <= 5) cands.push({ kind: 'eink', run: R, score: ha * R.length });
+      if (R.length === 2) {
+        runs.forEach(function (D) {
+          if (D === R || D.length > 3) return;
+          var db = box(D), dh = mean(D, gh), dw = mean(D, gw), gap = bx.x0 - db.x1;
+          if (dh >= 1.25 * ha && gap >= -0.15 * dw && gap <= 0.8 * dw && bx.y0 <= db.y0 + 0.45 * dh && gcy(R[0]) < (db.y0 + db.y1) / 2 && Math.abs(bx.y0 - db.y0) < 0.5 * dh)
+            cands.push({ kind: 'paper', run: R, dollars: D, score: dh * (D.length + 1) });
+        });
+      }
+    });
+    cands.sort(function (a, b) { return b.score - a.score; });
+    var seq = Promise.resolve(null), tried = 0;
+    cands.slice(0, 4).forEach(function (cd) {
+      seq = seq.then(function (found) {
+        if (found) return found;
+        var glyphs = cd.kind === 'paper' ? cd.dollars.slice().sort(function (a, b) { return a.x0 - b.x0; }).concat(cd.run.slice().sort(function (a, b) { return a.x0 - b.x0; })) : cd.run.slice().sort(function (a, b) { return a.x0 - b.x0; });
+        var digs = [], chain = Promise.resolve();
+        /* stop reading a candidate as soon as a glyph is clearly not a digit (letters in titles also form runs) */
+        glyphs.forEach(function (g, gi) {
+          chain = chain.then(function () {
+            if (digs.length && !(digs[digs.length - 1].conf >= 55)) return;
+            return readDigit(eng, S, g).then(function (d) { digs.push(d); });
+          });
+        });
+        return chain.then(function () {
+          if (S.log) S.log.push('candidate ' + cd.kind + ' ' + digs.map(function (d) { return d.d + '/' + Math.round(d.conf); }).join(' '));
+          var okAll = digs.length === glyphs.length && digs.every(function (d) { return d.d !== '?' && d.conf >= 55; }), partial = false;
+          if (!okAll) {
+            var lastBad = digs[digs.length - 1], restOk = digs.slice(0, -1).every(function (d) { return d.d !== '?' && d.conf >= 55; });
+            if (cd.kind === 'paper' && digs.length === glyphs.length && lastBad.clipped && restOk) partial = true; else return null;
+          }
+          var str = digs.map(function (d) { return d.d; }).join(''), dollars, cents;
+          if (cd.kind === 'paper') { dollars = str.slice(0, str.length - 2); cents = str.slice(-2); }
+          else {
+            var ordered = glyphs, dot = -1, rb = box(ordered), h0 = mean(ordered, gh);
+            for (var k = 0; k < ordered.length - 1 && dot < 0; k++) {
+              var gx0 = ordered[k].x1, gx1 = ordered[k + 1].x0;
+              S.list.forEach(function (c) {
+                var h = gh(c), w = gw(c), cx = (c.x0 + c.x1) / 2;
+                if (dot < 0 && h >= 0.1 * h0 && h <= 0.45 * h0 && w >= 0.1 * h0 && w <= 0.6 * h0 && cx >= gx0 - 0.1 * h0 && cx <= gx1 + 0.1 * h0 && c.y0 > rb.y0 + 0.5 * (rb.y1 - rb.y0)) dot = k + 1;
+              });
+            }
+            if (dot < 0) dot = ordered.length - 2;
+            if (dot < 1) return null;
+            dollars = str.slice(0, dot); cents = str.slice(dot);
+          }
+          if (cents.length !== 2 || !dollars.length || dollars.length > 3) return null;
+          var all = box(glyphs.concat(cd.kind === 'paper' ? [] : []));
+          return { text: dollars + '.' + cents, value: partial ? NaN : parseFloat(dollars + '.' + cents), partial: partial, kind: cd.kind, conf: Math.min.apply(null, digs.filter(function (d) { return d.d !== '?'; }).map(function (d) { return d.conf; })), digits: digs,
+            all: all, gh: mean(cd.kind === 'paper' ? cd.dollars : cd.run, gh), dollars: cd.kind === 'paper' ? box(cd.dollars) : all, cents: cd.kind === 'paper' ? box(cd.run) : null };
+        });
+      });
+    });
+    return seq;
+  }
+
+  /* ---------- helpers for reading regions ---------- */
+  var curName = '';
+  function dbgBoxes(S, boxes, name) {
+    if (!window.__DBG) return;
+    var cv = document.createElement('canvas'); cv.width = S.w; cv.height = S.h;
+    var x = cv.getContext('2d'), im = x.createImageData(S.w, S.h), i;
+    for (i = 0; i < S.w * S.h; i++) { var v = S.mask[i] ? 0 : 255; im.data[i * 4] = im.data[i * 4 + 1] = im.data[i * 4 + 2] = v; im.data[i * 4 + 3] = 255; }
+    x.putImageData(im, 0, 0); x.lineWidth = 2;
+    boxes.forEach(function (b) { x.strokeStyle = b.c; x.strokeRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0); });
+    dbg(curName + '_' + name, cv);
+  }
+  function clipBox(c, b) {
+    var x0 = Math.max(0, Math.round(b.x0)), y0 = Math.max(0, Math.round(b.y0)), x1 = Math.min(c.width, Math.round(b.x1)), y1 = Math.min(c.height, Math.round(b.y1));
+    return { x0: x0, y0: y0, x1: Math.max(x0 + 2, x1), y1: Math.max(y0 + 2, y1) };
+  }
+  function cropBox(c, b) { b = clipBox(c, b); return crop(c, b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0); }
+  /* try each preparation in turn until `accept(text)` returns something */
+  function tryReads(eng, tries, accept, out, label) {
+    var chain = Promise.resolve(null);
+    tries.forEach(function (t) {
+      chain = chain.then(function (hit) {
+        if (hit) return hit;
+        return eng.recognize(t.img, { psm: t.psm, whitelist: t.wl || '' }).then(function (r) {
+          out.raw.push(label + ' ' + t.tag + ': ' + r.text.trim().replace(/\n+/g, ' / '));
+          var v = accept(r.text); return v ? { v: v, text: r.text, tag: t.tag } : null;
+        });
+      });
+    });
+    return chain;
+  }
+  function cleanName(text) {
+    var lines = String(text).split('\n').map(function (s) { return s.replace(/[^A-Za-z0-9'’&%.,\/" \-]/g, ' ').replace(/\s+/g, ' ').trim(); });
+    lines = lines.filter(function (s) {
+      var letters = (s.match(/[A-Za-z]/g) || []).length;
+      if (letters < 4) return false;
+      if (/\bSAVE\b|^Special|^SPECIAL|\bpkg\b|\bea\b|Harvest|FAVOUR|^Farm Boy\W*(TM|™)?$/i.test(s)) return false;
+      return true;
+    });
+    return lines.join(' ').replace(/^(F?arm|Boy)\s+(?=[A-Za-z]{4,})/i, '').replace(/\s+(Boy|Farm)$/i, '').replace(/\bFarm\s+(?=Artisana)|\b(Artisana)\s+Boy\b/i, '$1').trim();
+  }
+
+  /* size text is tiny and sometimes italic, so read it several ways and let the reads vote */
+  function readSize(eng, crop, out) {
+    var lb = sizeLineBox(crop), tight = lb ? cropBox(crop, lb) : null;
+    var variants = (tight ? [
+      { img: grayCanvas(tight, 3, 1, 14), psm: 7, tag: 'tight g x3 psm7' },
+      { img: grayCanvas(tight, 2, 1, 14), psm: 6, tag: 'tight g x2 psm6' }
+    ] : []).concat([
+      { img: grayCanvas(crop, 2, 1, 14), psm: 6, tag: 'g x2 psm6' },
+      { img: grayCanvas(crop, 2, 1, 14), psm: 11, tag: 'g x2 psm11' },
+      { img: grayCanvas(crop, 3, 1, 14), psm: 11, tag: 'g x3 psm11' },
+      { img: inkCanvas(crop, 2, 60, 15), psm: 6, tag: 'ink x2 psm6' },
+      { img: chanOtsu(crop, 14, 1, 3), psm: 11, tag: 'otsu x3 psm11' },
+      { img: inkCanvas(crop, 3, 90, 15), psm: 7, tag: 'ink x3 psm7' }
+    ]), votes = {}, chain = Promise.resolve(), repair = makeDigitRepairer(crop);
+    function top() {
+      var ks = Object.keys(votes).sort(function (x, y) { return votes[y].n - votes[x].n; });
+      return ks.length ? { best: votes[ks[0]], second: ks[1] ? votes[ks[1]] : null } : null;
+    }
+    variants.forEach(function (v) {
+      chain = chain.then(function () {
+        var t = top(); if (t && t.best.n >= 3 && (!t.second || t.second.n < t.best.n - 1)) return;
+        return eng.recognize(v.img, { psm: v.psm, whitelist: '' }).then(function (r) {
+          var s = parseSizeAny(r.text), before = s ? s.value : null;
+          if (s) s = repair(s);
+          out.raw.push('size ' + v.tag + ': ' + r.text.trim().replace(/\n+/g, ' / ') + (s ? '  => ' + s.value + s.unit + (before !== s.value ? ' (shape check changed ' + before + ')' : '') : ''));
+          if (!s) return;
+          var key = s.unit + s.value.toFixed(3);
+          if (!votes[key]) votes[key] = { size: s, n: 0 };
+          votes[key].n++;
+          if (!s.fixed) votes[key].size.fixed = false;
+        });
+      });
+    });
+    return chain.then(function () {
+      var t = top(); if (!t) return;
+      out.size = t.best.size; out.sizeVotes = t.best.n;
+      if ((t.best.size.unit === 'l' && /[38]/.test(String(t.best.size.value)) && (t.best.size.unchecked || t.best.size.fixed)) || t.best.n < 2 || (t.second && t.second.n >= t.best.n)) out.flags.push('checksize');
+      if (t.second) out.raw.push('size also read as ' + t.second.size.value + t.second.size.unit + ' (' + t.second.n + ' vote' + (t.second.n > 1 ? 's' : '') + '), chosen ' + t.best.size.value + t.best.size.unit + ' (' + t.best.n + ')');
+    });
+  }
+  function nameFromWords(words) {
+    var good = words.filter(function (w) { return w.conf >= 45 && (/[A-Za-z]{2,}/.test(w.text) || /^\d+%?$/.test(w.text) || /^[A-Z]\.([A-Z]\.)?$/.test(w.text)); });
+    return { text: cleanName(groupLines(good).map(function (l) { return l.text; }).join('\n')), conf: good.length ? mean(good, function (w) { return w.conf; }) : 0 };
+  }
+  /* the name is only a label for the card, so a few reads are tried and the one with the most confident letters wins */
+  function readName(eng, crop, out) {
+    var tries = [
+      { img: grayCanvas(crop, 1, 1, 10), psm: 6, tag: 'g' },
+      { img: inkCanvas(crop, 1, 100, 25), psm: 6, tag: 'ink r100' },
+      { img: inkCanvas(crop, 1.5, 105, 20), psm: 6, tag: 'ink x1.5' },
+      { img: chanOtsu(crop, 12, 1, 1), psm: 6, tag: 'otsu' }
+    ], best = null, chain = Promise.resolve();
+    tries.forEach(function (v) {
+      chain = chain.then(function () {
+        if (best && best.letters >= 12 && best.conf >= 80) return;
+        return eng.recognize(v.img, { psm: v.psm, whitelist: '' }).then(function (r) {
+          var n = nameFromWords(r.words), letters = (n.text.match(/[A-Za-z]/g) || []).length, score = letters * n.conf;
+          out.raw.push('name ' + v.tag + ': ' + n.text + '  (' + letters + ' letters, conf ' + Math.round(n.conf) + ')');
+          if (!best || score > best.score) best = { text: n.text, letters: letters, conf: n.conf, score: score };
+        });
+      });
+    });
+    return chain.then(function () { out.item = best && best.text ? best.text : null; });
+  }
+
+  /* ---------- Farm Boy ---------- */
+  function readFarmBoy(c, eng, out, band) {
+    var P = greenPlane(c, 1100), mask = inkMask(P, 1 / 6, 32, 125), C = components(mask, P.w, P.h, 8);
+    var S = { w: P.w, h: P.h, lab: C.lab, list: C.list, s: P.s, mask: mask, log: [] }, f = 1 / P.s;
+    out.store = 'F';
+    return findPrice(eng, S).then(function (pr) {
+      out.raw.push('shape finder: ' + S.log.join(' | '));
+      if (!pr) { out.raw.push('shape finder: no digit group found'); dbgBoxes(S, [], 'none'); return fbFallback(c, eng, out, band); }
+      var bx = [{ x0: pr.all.x0, y0: pr.all.y0, x1: pr.all.x1, y1: pr.all.y1, c: '#f00' }];
+      if (pr.cents) bx.push({ x0: pr.cents.x0, y0: pr.cents.y0, x1: pr.cents.x1, y1: pr.cents.y1, c: '#00f' });
+      pr.kindLabel = pr.kind === 'eink' ? 'shelf tag (e-ink)' : 'paper sign (raised cents)';
+      out.priceInfo = pr; out.kind = pr.kindLabel;
+      if (pr.partial) { out.partialPrice = pr.text; out.price = null; } else out.price = { qty: 1, total: pr.value, each: pr.value, multi: false };
+      out.raw.push('price digits (' + pr.kind + '): ' + pr.digits.map(function (d) { return d.d + '/' + Math.round(d.conf) + '/' + d.how; }).join('  ') + '  => ' + pr.text);
+      var Hd = pr.gh * f, D = { x0: pr.dollars.x0 * f, y0: pr.dollars.y0 * f, x1: pr.dollars.x1 * f, y1: pr.dollars.y1 * f };
+      var R = { x0: pr.all.x0 * f, y0: pr.all.y0 * f, x1: pr.all.x1 * f, y1: pr.all.y1 * f }, Rw = R.x1 - R.x0, sizeBox, nameBox;
+      if (pr.kind === 'eink') {
+        sizeBox = { x0: R.x0 + 0.5 * Rw, x1: R.x1 + 0.6 * Rw, y0: R.y1 - 0.1 * Hd, y1: R.y1 + 0.85 * Hd };
+        nameBox = { x0: R.x0 - 0.6 * Rw, x1: R.x1 + 0.6 * Rw, y0: R.y0 - 1.15 * Hd, y1: R.y0 - 0.02 * Hd };
+      } else {
+        var Cb = { x0: pr.cents.x0 * f, y0: pr.cents.y0 * f, x1: pr.cents.x1 * f, y1: pr.cents.y1 * f }, Cw = Cb.x1 - Cb.x0, Hc = Cb.y1 - Cb.y0;
+        sizeBox = { x0: Cb.x0 - 0.3 * Cw, x1: c.width, y0: Cb.y1 + 0.05 * Hc, y1: D.y1 + 0.55 * Hd };
+        nameBox = { x0: 0, x1: D.x0 - 0.05 * Hd, y0: D.y0 - 1.1 * Hd, y1: D.y1 + 0.3 * Hd };
+      }
+      var sb = clipBox(c, sizeBox), nb = clipBox(c, nameBox);
+      bx.push({ x0: sb.x0 * P.s, y0: sb.y0 * P.s, x1: sb.x1 * P.s, y1: sb.y1 * P.s, c: '#0a0' }, { x0: nb.x0 * P.s, y0: nb.y0 * P.s, x1: nb.x1 * P.s, y1: nb.y1 * P.s, c: '#f0f' });
+      dbgBoxes(S, bx, 'found');
+      var sizeCrop = cropBox(c, sizeBox), nameCrop = cropBox(c, nameBox);
+      dbg(curName + '_sizecrop', sizeCrop); dbg(curName + '_namecrop', nameCrop);
+      return readSize(eng, sizeCrop, out).then(function () {
+        return readName(eng, nameCrop, out);
+      }).then(function () {
+        out.storeWhy = out.kind + (/farm\s*boy/i.test(out.item || '') ? ', "Farm Boy" in the name' : '');
+        if (out.size) return null;
+        /* last resort for the size: whole photo */
+        return eng.recognize(c, { psm: 11, whitelist: '' }).then(function (r) {
+          out.raw.push('whole photo (size search):\n' + r.text.trim());
+          var best = null;
+          r.words.forEach(function (w, i) {
+            var s = parseSizeLoose(w.text + (r.words[i + 1] && Math.abs(r.words[i + 1].y0 - w.y0) < w.h ? ' ' + r.words[i + 1].text : ''));
+            if (s && w.y0 / P.s * 0 + w.y0 >= R.y1 - 0.3 * Hd && w.x0 >= R.x0) best = best || s;
+          });
+          if (best) { out.size = best; out.sizeHow = 'whole photo'; }
+        });
+      });
+    });
+  }
+  /* no digit group found: read the whole photo and take the biggest price-like number, as before, but also try the green channel (red or black text on yellow) */
+  function fbFallback(c, eng, out, band) {
+    return eng.recognize(c, { psm: 11, whitelist: '' }).then(function (r) {
+      out.raw.push('whole photo:\n' + r.text.trim());
+      if (!r.words.some(function (w) { return /^\$?\d{1,3}[.,]\d{2}$/.test(w.text); })) {
+        return eng.recognize(chanOtsu(c, 10, 1, 1), { psm: 6, whitelist: '' }).then(function (r2) { out.raw.push('second pass (green channel):\n' + r2.text.trim()); out.second = true; return r2.words.length ? r2 : r; });
+      }
+      return r;
+    }).then(function (r) {
+      var words = r.words, i, best = null;
+      words.forEach(function (w) { if (/^\$?\d{1,3}[.,]\d{2}$/.test(w.text) && !/^\$/.test(w.text) && (!best || w.h > best.h)) best = w; });
+      if (!best) words.forEach(function (w) { if (/^\$?\d{1,3}[.,]\d{2}$/.test(w.text) && (!best || w.h > best.h)) best = w; });
+      if (best) out.price = parsePrice(best.text);
+      var lines = groupLines(words), sizeFound = null, codeFound = null;
+      for (i = 0; i < words.length; i++) {
+        var w = words[i], nx = words[i + 1], s = null;
+        if (/^F\d-\d{4}$/.test(w.text)) codeFound = w.text;
+        s = parseSizeLoose(w.text + (nx ? ' ' + nx.text : ''));
+        if (s && (!sizeFound || w.y0 > sizeFound.y)) { s.y = w.y0; sizeFound = s; }
+      }
+      out.size = sizeFound;
+      var priceY = best ? best.y0 : 1e9;
+      var nameLines = lines.filter(function (l) { return l.y < priceY && /[A-Za-z]{4,}/.test(l.text); }).slice(0, 3).map(function (l) { return l.text; });
+      out.item = nameLines.join(' ') || null;
+      out.storeWhy = codeFound ? 'tag code ' + codeFound : (band && band.band ? 'yellow band without green arrow' : 'no Dollarama band');
+      out.kind = 'unknown layout (fallback read)';
+    });
+  }
+
+  /* Dollarama names are printed in capitals, so lower-case scraps are shelf and sticker noise */
+  function capsOnly(t) { return String(t).split(' ').filter(function (w) { return /^[A-Z0-9'’&%.,\/\-]{2,}$/.test(w) && /[A-Z0-9]/.test(w); }).join(' '); }
+
+  /* ---------- Dollarama ---------- */
+  function readDollarama(c, eng, out, band) {
+    out.store = 'D';
+    var pad = band.h * 0.06;
+    var bandCanvas = redOtsu(crop(c, band.x - pad, band.y - pad, band.w + pad * 2, band.h + pad * 2), 20);
+    out.cropUrl = bandCanvas.toDataURL('image/png');
+    var nameBox = { x0: band.x - band.w * 0.1, y0: band.y - band.h * 1.7, x1: band.x + band.w * 1.1, y1: band.y + 6 };
+    var nameCanvas = cropBox(c, nameBox);
+    var tight = cropBox(c, { x0: band.x, y0: band.y - band.h * 1.7, x1: band.x + band.w, y1: band.y + 2 });
+    /* try several reads of the price band until one parses; the green arrow and barcode can confuse a single pass */
+    var plain = crop(c, band.x - pad, band.y - pad, band.w + pad * 2, band.h + pad * 2);
+    var noArrow = redOtsu(crop(c, band.x + band.w * 0.2, band.y - pad, band.w * 0.8, band.h + pad * 2), 20);
+    var attempts = [
+      { img: bandCanvas, psm: 7, wl: '$0123456789./', tag: 'band' },
+      { img: noArrow, psm: 7, wl: '$0123456789./', tag: 'band without arrow' },
+      { img: noArrow, psm: 8, wl: '$0123456789./', tag: 'band without arrow, one word' },
+      { img: plain, psm: 7, wl: '$0123456789./', tag: 'band, no threshold' }
+    ];
+    return tryReads(eng, attempts, function (t) { return parsePrice(t); }, out, 'price').then(function (hit) {
+      if (hit) { out.price = hit.v; if (hit.tag !== 'band') out.priceNote = hit.tag; }
+      return eng.recognize(nameCanvas, { psm: 6, whitelist: '' });
+    }).then(function (r2) {
+      out.raw.push('name area:\n' + r2.text.trim());
+      var clean = function (t) { return t.split('\n').map(function (s) { return s.trim(); }).filter(function (s) { return /[A-Za-z]{3,}/.test(s); }).join(' ').replace(/[^A-Za-z0-9'’&%.,\/ \-—]/g, ' ').replace(/\s+/g, ' ').trim(); };
+      var rawItem = clean(r2.text);
+      out.item = rawItem;
+      out.size = parseSize(out.item);
+      out.itemShown = capsOnly(rawItem);
+      if (out.size) return null;
+      /* size missing or garbled (a letter lost on a blurry photo): read just the label's own name lines, thresholded and enlarged */
+      return tryReads(eng, [
+        { img: chanOtsu(tight, 14, 0, 1.6), psm: 6, tag: 'name, thresholded x1.6' },
+        { img: scaled(tight, 2), psm: 6, tag: 'name, enlarged x2' },
+        { img: chanOtsu(tight, 14, 0, 2.2), psm: 6, tag: 'name, thresholded x2.2' }
+      ], function (t) { return parseSize(clean(t)); }, out, 'size retry').then(function (hit) {
+        if (hit) { out.size = hit.v; out.item = clean(hit.text); out.itemShown = capsOnly(out.item); out.sizeHow = hit.tag; return; }
+        var m = /\b(\d{2,4})\b(?!\s?(ML|KG|G|L)\b)/i.exec(out.item);
+        if (m) out.sizeGuess = m[1];
+      });
+    });
+  }
+
+  /* ---------- one photo ---------- */
+  function analyse(file, eng) {
+    var out = { name: file.name || 'camera photo', ms: {}, raw: [], store: null, item: null, size: null, price: null, unit: null, flags: [], thumb: null, cropUrl: null };
+    curName = (file.name || 'photo').replace(/\.[a-z]+$/i, '');
+    var t0 = performance.now();
+    return loadImage(file).then(function (img) {
+      var c = toCanvas(img, MAX_SIDE);
+      out.thumb = c.toDataURL('image/jpeg', 0.6);
+      out.ms.load = performance.now() - t0;
+      var band = findBand(c), t1 = performance.now();
+      out.band = band;
+      var run = (band && band.band && band.arrow) ? readDollarama(c, eng, out, band) : readFarmBoy(c, eng, out, band);
+      return run.then(function () { out.ms.ocr = performance.now() - t1; });
+    }).then(function () {
+      if (out.itemShown) { out.raw.push('item (raw): ' + out.item); out.item = out.itemShown; }
+      out.unit = unitPrice(out.price, out.size);
+      if (out.store === 'D' && out.price && !out.price.multi) {
+        var near = Math.round(out.price.total * 4) / 4;
+        if (Math.abs(out.price.total - near) > 0.004 && Math.abs(out.price.total - near) <= 0.0501) {
+          out.flags.push('snapped from ' + money(out.price.total));
+          out.price = { qty: 1, total: near, each: near, multi: false };
+          out.unit = unitPrice(out.price, out.size);
+        }
+      }
+      if (out.store === 'D' && out.price) {
+        [out.price.total, out.price.each].forEach(function (v) {
+          if (Math.abs(v * 100 - Math.round(v * 100 / 25) * 25) > 0.5 && out.flags.indexOf('bad25') < 0) out.flags.push('bad25');
+        });
+      }
+      if (out.partialPrice) out.flags.push('cutoff:' + out.partialPrice);
+      else if (!out.price) out.flags.push('noprice');
+      if (!out.size) out.flags.push('nosize');
+      if (!out.size && out.sizeGuess) out.flags.push('nounit:' + out.sizeGuess);
+      if (out.size && out.size.fixed) out.flags.push('fixedsize');
+      if (out.price && out.price.multi) out.flags.push('multi');
+      if (out.priceInfo && out.priceInfo.conf < 80) out.flags.push('checkprice');
+      return out;
+    });
+  }
+
+/* ---------- grocery items ---------- */
+  /* The 36 items the matcher can pick from, in 6 categories of 6.
+     unit: the one unit type the item is sold in: 'weight' (g, kg), 'volume' (ml, L) or 'count'.
+     words: names that mean this item outright (strong).
+     hints: words that suggest it but could mean something else (weak; also lose to any longer match that contains them).
+     Write aliases in plain lowercase English; spacing does not matter ("chick peas" also matches "chickpeas" and "CHICKPEAS"). */
+  var GROCERY_ITEMS = [
+    /* 1. Everyday spices */
+    { id: 'black-pepper', name: 'Black pepper', cat: 'Everyday Spices', unit: 'weight',
+      words: ['black pepper', 'ground pepper', 'ground black pepper', 'peppercorns', 'black peppercorns'], hints: ['pepper'] },
+    { id: 'garlic-powder', name: 'Garlic powder', cat: 'Everyday Spices', unit: 'weight',
+      words: ['garlic powder', 'granulated garlic'], hints: ['garlic'] },
+    { id: 'onion-powder', name: 'Onion powder', cat: 'Everyday Spices', unit: 'weight',
+      words: ['onion powder', 'granulated onion'], hints: ['onion'] },
+    { id: 'paprika', name: 'Paprika', cat: 'Everyday Spices', unit: 'weight',
+      words: ['paprika', 'smoked paprika', 'sweet paprika'], hints: [] },
+    { id: 'cumin', name: 'Cumin', cat: 'Everyday Spices', unit: 'weight',
+      words: ['cumin', 'ground cumin', 'cumin seed', 'cumin seeds'], hints: [] },
+    { id: 'chili-powder', name: 'Chili powder', cat: 'Everyday Spices', unit: 'weight',
+      words: ['chili powder', 'chilli powder'], hints: ['chili', 'chilli'] },
+
+    /* 2. Canned beans, veg & fruit */
+    { id: 'black-beans', name: 'Black beans', cat: 'Canned Beans, Veg & Fruit', unit: 'volume',
+      words: ['black beans', 'black turtle beans'], hints: ['beans'] },
+    { id: 'chickpeas', name: 'Chickpeas', cat: 'Canned Beans, Veg & Fruit', unit: 'volume',
+      words: ['chick peas', 'garbanzo beans', 'garbanzos'], hints: ['garbanzo'] },
+    { id: 'kidney-beans', name: 'Kidney beans', cat: 'Canned Beans, Veg & Fruit', unit: 'volume',
+      words: ['kidney beans', 'red kidney beans', 'dark red kidney beans'], hints: ['kidney', 'beans'] },
+    { id: 'corn', name: 'Corn', cat: 'Canned Beans, Veg & Fruit', unit: 'volume',
+      words: ['corn', 'kernel corn', 'whole kernel corn', 'cream corn', 'creamed corn', 'niblets'], hints: ['kernel'] },
+    { id: 'canned-peas', name: 'Canned peas', cat: 'Canned Beans, Veg & Fruit', unit: 'volume',
+      words: ['peas', 'green peas', 'sweet peas', 'garden peas', 'petits pois'], hints: [] },
+    { id: 'canned-fruit', name: 'Canned fruit', cat: 'Canned Beans, Veg & Fruit', unit: 'volume',
+      words: ['fruit cocktail', 'peaches', 'peach halves', 'sliced peaches', 'pears', 'pear halves', 'pineapple',
+        'pineapple chunks', 'mandarin oranges', 'mandarins', 'fruit salad', 'mixed fruit', 'apricots'], hints: ['fruit'] },
+
+    /* 3. Sauces, soups & cooking bases (tomato paste also covers tomato sauce, penne covers rotini) */
+    { id: 'diced-tomatoes', name: 'Diced tomatoes', cat: 'Sauces, Soups & Cooking Bases', unit: 'volume',
+      words: ['diced tomatoes', 'tomatoes', 'whole tomatoes', 'crushed tomatoes', 'stewed tomatoes', 'plum tomatoes'], hints: ['tomato', 'diced'] },
+    { id: 'tomato-sauce', name: 'Tomato paste', cat: 'Sauces, Soups & Cooking Bases', unit: 'volume',
+      words: ['tomato sauce', 'tomato paste', 'passata'], hints: ['paste'] },
+    { id: 'pasta-sauce', name: 'Pasta sauce', cat: 'Sauces, Soups & Cooking Bases', unit: 'volume',
+      words: ['pasta sauce', 'spaghetti sauce', 'marinara', 'marinara sauce', 'tomato basil sauce', 'alfredo sauce'], hints: ['sauce', 'basil'] },
+    { id: 'broth', name: 'Soup broth', cat: 'Sauces, Soups & Cooking Bases', unit: 'volume',
+      words: ['broth', 'stock', 'chicken broth', 'vegetable broth', 'beef broth', 'chicken stock', 'vegetable stock', 'bone broth'], hints: ['bouillon'] },
+    { id: 'coconut-milk', name: 'Coconut milk', cat: 'Sauces, Soups & Cooking Bases', unit: 'volume',
+      words: ['coconut milk', 'coconut cream', 'light coconut milk'], hints: ['coconut'] },
+    { id: 'canned-soup', name: 'Canned soup', cat: 'Sauces, Soups & Cooking Bases', unit: 'volume',
+      words: ['soup', 'condensed soup', 'cream of mushroom', 'cream of chicken', 'chicken noodle', 'minestrone', 'chowder'], hints: [] },
+
+    /* 4. Pasta & rice */
+    { id: 'spaghetti', name: 'Spaghetti', cat: 'Pasta & Rice', unit: 'weight',
+      words: ['spaghetti', 'spaghettini'], hints: ['linguine', 'fettuccine', 'capellini', 'angel hair', 'pasta'] },
+    { id: 'penne-rotini', name: 'Penne', cat: 'Pasta & Rice', unit: 'weight',
+      words: ['penne', 'penne rigate', 'rotini'], hints: ['fusilli', 'rigatoni', 'ziti', 'pasta'] },
+    { id: 'macaroni', name: 'Macaroni', cat: 'Pasta & Rice', unit: 'weight',
+      words: ['macaroni', 'elbow macaroni', 'elbows'], hints: ['pasta'] },
+    { id: 'egg-noodles', name: 'Egg noodles', cat: 'Pasta & Rice', unit: 'weight',
+      words: ['egg noodles', 'broad egg noodles'], hints: ['noodles'] },
+    { id: 'white-rice', name: 'White rice', cat: 'Pasta & Rice', unit: 'weight',
+      words: ['rice', 'white rice', 'long grain rice', 'long grain white rice', 'basmati rice', 'jasmine rice'], hints: ['basmati', 'jasmine', 'long grain'] },
+    { id: 'brown-rice', name: 'Brown rice', cat: 'Pasta & Rice', unit: 'weight',
+      words: ['brown rice', 'long grain brown rice', 'whole grain rice'], hints: [] },
+
+    /* 5. Bread, baking & spreads */
+    { id: 'rolled-oats', name: 'Oats', cat: 'Bread, Baking & Spreads', unit: 'weight',
+      words: ['rolled oats', 'oats', 'oatmeal', 'quick oats', 'large flake oats', 'old fashioned oats'], hints: [] },
+    { id: 'flour', name: 'Flour', cat: 'Bread, Baking & Spreads', unit: 'weight',
+      words: ['flour', 'all purpose flour', 'unbleached flour'], hints: ['all purpose'] },
+    { id: 'tortillas', name: 'Tortillas', cat: 'Bread, Baking & Spreads', unit: 'count',
+      words: ['tortillas', 'tortilla', 'wraps', 'tortilla wraps'], hints: ['wrap'] },
+    { id: 'naan', name: 'Naan', cat: 'Bread, Baking & Spreads', unit: 'count',
+      words: ['naan', 'naan bread', 'garlic naan'], hints: ['flatbread'] },
+    { id: 'peanut-butter', name: 'Peanut butter', cat: 'Bread, Baking & Spreads', unit: 'weight',
+      words: ['peanut butter', 'natural peanut butter'], hints: ['peanut'] },
+    { id: 'jam', name: 'Jam', cat: 'Bread, Baking & Spreads', unit: 'volume',
+      words: ['jam', 'jelly', 'preserves', 'marmalade', 'fruit spread'], hints: [] },
+
+    /* 6. Other */
+    { id: 'salt', name: 'Salt', cat: 'Other', unit: 'weight',
+      words: ['salt', 'sea salt', 'table salt', 'iodized salt', 'kosher salt'], hints: [] },
+    { id: 'sugar', name: 'Sugar', cat: 'Other', unit: 'weight',
+      words: ['sugar', 'white sugar', 'granulated sugar', 'cane sugar'], hints: [] },
+    { id: 'cinnamon', name: 'Cinnamon', cat: 'Other', unit: 'weight',
+      words: ['cinnamon', 'ground cinnamon'], hints: [] },
+    { id: 'oregano', name: 'Oregano', cat: 'Other', unit: 'weight',
+      words: ['oregano', 'oregano leaves', 'dried oregano'], hints: [] },
+    { id: 'red-pepper-flakes', name: 'Pepper flakes', cat: 'Other', unit: 'weight',
+      words: ['crushed red pepper', 'red pepper flakes', 'crushed red pepper flakes', 'chili flakes', 'chilli flakes',
+        'pepper flakes', 'crushed chilies', 'crushed chillies'], hints: [] },
+    { id: 'tuna', name: 'Tuna', cat: 'Other', unit: 'weight',
+      words: ['tuna', 'light tuna', 'flaked tuna', 'chunk light tuna', 'albacore', 'albacore tuna'], hints: [] }
+  ];
+/* ---------- item matcher ---------- */
+  /* Maps the item text read off a price tag ("DEL MONTE 341ML KERNEL CORN") to 3 guesses from GROCERY_ITEMS.
+     Order of evidence: a name you confirmed before > the alias match nearest the end of the text (tags read BRAND [SIZE] ITEM)
+     > longer alias > unit type (only breaks near-ties, since OCR garbles units most).
+     Every confirmed scan goes into one localStorage log; it is the learned table, the purchase counts and the test set. */
+  var GroceryMatcher = (function () {
+    var LOG_KEY = 'grocery.matchlog.v1';
+    var EXACT = 1, FUZZY = 0.8, PREFIX = 0.6, HINT = 0.5, UNIT_OK = 0.05, UNIT_BAD = 0.15;
+
+    /* text -> word tokens. Size tokens ("341ML", "G80ML", "GBOML", "1.89L") are dropped, digits inside words
+       are read as their look-alike letters (C0RN -> corn), and a plural s is dropped so "pea" and "peas" agree. */
+    function tokens(text) {
+      var t = String(text || '').toLowerCase();
+      if (t.normalize) t = t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      t = t.replace(/&/g, ' and ').replace(/['\u2018\u2019`]/g, '').replace(/[^a-z0-9.|]+/g, ' ');
+      var out = [];
+      t.split(' ').forEach(function (w) {
+        w = w.replace(/^\.+|\.+$/g, '');
+        if (!w) return;
+        if (/^[0-9gbois.]*[0-9][0-9gbois.]*(ml|mi|m1|kg|g|l)?$/.test(w)) return;
+        if (/^[gbois]{3,4}(ml|kg|g|l)$/.test(w)) return;
+        w = w.replace(/0/g, 'o').replace(/[1|]/g, 'l').replace(/5/g, 's').replace(/[^a-z]/g, '');
+        if (w.length >= 4 && /[^s]s$/.test(w)) w = w.slice(0, -1);
+        if (w) out.push(w);
+      });
+      return out;
+    }
+    /* Tesseract look-alikes folded together on both sides before comparing: i/l and rn/m. */
+    function canon(s) { return s.replace(/rn/g, 'm').replace(/i/g, 'l'); }
+    function keyOf(text) { return tokens(text).join(' '); }
+
+    function editDistance(a, b, max) {
+      if (Math.abs(a.length - b.length) > max) return max + 1;
+      var prev = [], cur, i, j;
+      for (j = 0; j <= b.length; j++) prev[j] = j;
+      for (i = 1; i <= a.length; i++) {
+        cur = [i];
+        var rowMin = i;
+        for (j = 1; j <= b.length; j++) {
+          cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+          if (cur[j] < rowMin) rowMin = cur[j];
+        }
+        if (rowMin > max) return max + 1;
+        prev = cur;
+      }
+      return prev[b.length];
+    }
+
+    /* aliases prepared once: compact canonical form, so spacing never matters ("PASTASAUCE", "chick peas"/"chickpeas") */
+    var ALIASES = [];
+    GROCERY_ITEMS.forEach(function (it) {
+      [[it.words, 1], [it.hints, HINT]].forEach(function (pair) {
+        pair[0].forEach(function (a) {
+          ALIASES.push({ item: it, text: a, kind: pair[1], compact: canon(tokens(a).join('')) });
+        });
+      });
+    });
+
+    function unitType(size) {
+      if (!size || !size.unit) return null;
+      var u = String(size.unit).toLowerCase();
+      return u === 'g' || u === 'kg' ? 'weight' : u === 'ml' || u === 'l' ? 'volume' : null;
+    }
+
+    /* every alias match over spans of up to 4 consecutive tokens */
+    function findMatches(toks) {
+      var n = toks.length, found = [];
+      for (var s = 0; s < n; s++) {
+        var joined = '';
+        for (var e = s; e < n && e < s + 4; e++) {
+          joined += toks[e];
+          var span = canon(joined), atEnd = e === n - 1, lastLen = toks[e].length;
+          ALIASES.forEach(function (al) {
+            var mode = 0, how = '', L = al.compact.length;
+            if (span === al.compact) { mode = EXACT; how = 'exact'; }
+            else if (L >= 5) {
+              var max = L >= 8 ? 2 : 1, d = editDistance(span, al.compact, max);
+              if (d <= max) { mode = FUZZY - 0.1 * (d - 1); how = 'fuzzy' + d; }
+            }
+            if (!mode && atEnd && lastLen >= 3 && span.length >= 3 && span.length < L && al.compact.indexOf(span) === 0) {
+              mode = PREFIX; how = 'cut-off';
+            }
+            if (!mode) return;
+            var fromEnd = n - 1 - e;
+            found.push({ item: al.item, alias: al.text, how: how, s: s, e: e, len: L,
+              score: mode * al.kind / (1 + 0.4 * fromEnd) + 0.01 * L });
+          });
+        }
+      }
+      /* a match inside a longer match's span loses ("pasta" inside "pasta sauce", "peas" inside "chick peas");
+         a cut-off guess never hides a whole word, and loses to any whole-word match over the same words */
+      return found.filter(function (m) {
+        return !found.some(function (o) {
+          if (o === m || o.how === 'cut-off' || o.s > m.s || o.e < m.e) return false;
+          if (m.how === 'exact' && o.how !== 'exact') return false; /* "spaghetti" is not hidden by a typo of "spaghettini" */
+          return m.how === 'cut-off' || o.len > m.len;
+        });
+      });
+    }
+
+    function scoreItems(text, size) {
+      var toks = tokens(text), matches = findMatches(toks), ut = unitType(size), by = {};
+      matches.forEach(function (m) {
+        var b = by[m.item.id] || (by[m.item.id] = { item: m.item, best: null, extra: 0 });
+        if (!b.best || m.score > b.best.score) { if (b.best) b.extra++; b.best = m; } else b.extra++;
+      });
+      return Object.keys(by).map(function (id) {
+        var b = by[id], sc = b.best.score + 0.05 * Math.min(b.extra, 2), why = b.best.how + ' "' + b.best.alias + '"';
+        if (ut) { if (b.item.unit === ut) sc += UNIT_OK; else { sc -= UNIT_BAD; why += ', unit mismatch'; } }
+        return { item: b.item, score: sc, why: why };
+      }).sort(function (a, b) { return b.score - a.score; });
+    }
+
+    /* the pure core: everything it needs is passed in, so it can be tested off the phone */
+    function matchWith(text, size, log) {
+      log = log || [];
+      var key = keyOf(text), ut = unitType(size), learnedId = null, counts = {};
+      log.forEach(function (r) { counts[r.item] = (counts[r.item] || 0) + 1; if (r.key === key && key) learnedId = r.item; });
+      var ranked = scoreItems(text, size), guesses = [], seen = {};
+      function add(item, score, why) { if (guesses.length < 3 && !seen[item.id]) { seen[item.id] = 1; guesses.push({ id: item.id, name: item.name, cat: item.cat, score: Math.round(score * 100) / 100, why: why }); } }
+      if (learnedId) GROCERY_ITEMS.forEach(function (it) { if (it.id === learnedId) add(it, 9, 'confirmed before'); });
+      /* backups: same-unit items ahead of the rest when the unit was read */
+      var named = ranked.slice(0);
+      if (ut) named.sort(function (a, b) { return (b.item.unit === ut) - (a.item.unit === ut) || b.score - a.score; });
+      if (!learnedId && ranked.length) add(ranked[0].item, ranked[0].score, ranked[0].why);
+      named.forEach(function (r) { add(r.item, r.score, r.why); });
+      /* still short: items of the read unit type, most bought first */
+      GROCERY_ITEMS.slice(0).sort(function (a, b) {
+        return (ut ? (b.unit === ut) - (a.unit === ut) : 0) || (counts[b.id] || 0) - (counts[a.id] || 0);
+      }).forEach(function (it) { add(it, 0, ut && it.unit === ut ? 'same unit, bought ' + (counts[it.id] || 0) + 'x' : 'bought ' + (counts[it.id] || 0) + 'x'); });
+      var top = guesses[0].score;
+      return { guesses: guesses, key: key, learned: !!learnedId,
+        confidence: learnedId ? 'learned' : top >= 0.9 ? 'high' : top >= 0.45 ? 'medium' : top > 0 ? 'low' : 'none' };
+    }
+
+    function loadLog() {
+      try { var v = JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+    }
+    function saveLog(log) {
+      try { localStorage.setItem(LOG_KEY, JSON.stringify(log)); return true; } catch (e) { return false; }
+    }
+
+    return {
+      items: GROCERY_ITEMS,
+      categories: function () {
+        var cats = [];
+        GROCERY_ITEMS.forEach(function (it) { if (cats.indexOf(it.cat) < 0) cats.push(it.cat); });
+        return cats.map(function (c) { return { name: c, items: GROCERY_ITEMS.filter(function (it) { return it.cat === c; }) }; });
+      },
+      /* text: the item text from the label reader; size: {value, unit} or null */
+      match: function (text, size) { return matchWith(text, size, loadLog()); },
+      /* call once the item is settled, whether the best guess was accepted or corrected; the newest answer for a name wins */
+      confirm: function (text, size, itemId, extra) {
+        var log = loadLog(), rec = { key: keyOf(text), item: itemId, raw: String(text || ''), size: size || null, t: Date.now() };
+        if (extra) Object.keys(extra).forEach(function (k) { rec[k] = extra[k]; });
+        log.push(rec);
+        return saveLog(log);
+      },
+      exportLog: function () { return JSON.stringify(loadLog(), null, 1); },
+      /* demo mode keeps its picks apart from the real ones */
+      useLog: function (key) { LOG_KEY = key; },
+      matchWith: matchWith, tokens: tokens
+    };
+  })();
+  if (typeof module !== 'undefined') module.exports = GroceryMatcher;
+/* ---------- item pick ---------- */
+  /* Under each result: the best guess with Yes / No. No shows the two backups, Neither shows the 6 categories and then
+     their 6 items. Whatever is settled on is saved with GroceryMatcher.confirm, so the same name is known next time. */
+  function renderPick(r) {
+    var box = el('section', 'pick'), m = GroceryMatcher.match(r.item || '', r.size);
+    box.setAttribute('aria-label', 'Item');
+    r.guess = m.guesses[0].id;
+    function btn(text, cls, fn) { var b = el('button', 'btn' + (cls ? ' ' + cls : ''), text); b.type = 'button'; b.addEventListener('click', fn); return b; }
+    function show(title, buttons, why) {
+      box.textContent = '';
+      box.appendChild(el('div', 'pick-q', title));
+      if (why) box.appendChild(el('div', 'pick-why', why));
+      var grid = el('div', 'pick-grid'); buttons.forEach(function (b) { grid.appendChild(b); }); box.appendChild(grid);
+    }
+    function choose(g) {
+      var saved = GroceryMatcher.confirm(r.item || '', r.size, g.id, { store: r.store, price: r.price ? r.price.each || r.price.total : null });
+      r.guess = g.id;
+      show('Saved as ' + g.name + (saved ? '' : ' (could not save on this device)'), [btn('Change', null, categories)]);
+      box.setAttribute('data-done', '1');
+    }
+    function guess() {
+      var g = m.guesses[0];
+      show('Is this ' + g.name + '?', [btn('Yes', 'primary', function () { choose(g); }), btn('No', null, backups)],
+        m.confidence === 'learned' ? 'You picked this for the same name before.' : m.confidence === 'none' ? 'No item name was recognised, so this is a guess from what you buy.' : m.confidence === 'low' ? 'Low confidence.' : null);
+    }
+    function backups() {
+      show('Is it one of these?', m.guesses.slice(1).map(function (g) { return btn(g.name, null, function () { choose(g); }); }).concat([btn('Neither', null, categories)]));
+    }
+    function categories() {
+      box.removeAttribute('data-done');
+      show('Pick a category', GroceryMatcher.categories().map(function (c) {
+        return btn(c.name, null, function () {
+          show(c.name, c.items.map(function (it) { return btn(it.name, null, function () { choose(it); }); }).concat([btn('Back', null, categories)]));
+        });
+      }));
+    }
+    guess();
+    return box;
+  }
+  function exportItemLog() {
+    var txt = GroceryMatcher.exportLog(), ta = $('copyArea');
+    ta.value = txt; ta.hidden = false;
+    var done = function () { $('exportBtn').textContent = 'Item log copied'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function () { ta.select(); });
+    else ta.select();
+  }
+
+/* ---------- product photos (generated by make_photos.py, do not edit) ---------- */
+  var ITEM_PHOTOS = {};
+  var CAT_PHOTOS = {};
+  var DEMO_SCANS = [{"item": "corn", "store": "D", "total": 1.75, "size": {"value": 341, "unit": "ml"}, "days": 2}, {"item": "pasta-sauce", "store": "D", "total": 2.5, "size": {"value": 680, "unit": "ml"}, "days": 2}, {"item": "penne-rotini", "store": "D", "total": 1.25, "size": {"value": 450, "unit": "g"}, "days": 2}, {"item": "white-rice", "store": "D", "total": 2.0, "size": {"value": 900, "unit": "g"}, "days": 2}, {"item": "chickpeas", "store": "F", "total": 2.99, "size": {"value": 540, "unit": "ml"}, "days": 3}, {"item": "tortillas", "store": "F", "total": 3.99, "size": {"value": 425, "unit": "g"}, "days": 3}];
+/* ---------- app: screens from the design canvas, wired to analyse() + GroceryMatcher ---------- */
+  var STORES = { D: 'Dollarama', F: 'Farm Boy' };
+  var OTHER = { D: 'F', F: 'D' };
+  var PRICES_KEY = 'grocery.prices.v1';
+  var CAT_TITLES = { 'Canned Beans, Veg & Fruit': 'Canned Beans,\nVeg & Fruit', 'Sauces, Soups & Cooking Bases': 'Sauces, Soups &\nCooking Bases', 'Bread, Baking & Spreads': 'Bread, Baking\n& Spreads' };
+  var ICON = {
+    x: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    back: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+    chev: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B5F66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M9 5l7 7-7 7"/></svg>',
+    chevSm: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B5F66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M9 5l7 7-7 7"/></svg>',
+    cam: function (c) { return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + c + '" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>'; },
+    warn: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#15161A" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6"/><path d="M12 17h.01"/></svg>',
+    tag: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#15161A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/><path d="M3 21L21 3"/></svg>',
+    signal: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#15161A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><path d="M5 19v-3M10 19v-7M15 19v-11M20 19V5"/><path d="M3 3l18 18"/></svg>',
+    minus: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#15161A" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>',
+    plus: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#15161A" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>'
+  };
+
+  /* tiny DOM builder: h('div', {class: 'x', onclick: fn}, [children or text]); text always goes in as textContent */
+  function h(tag, attrs, kids) {
+    var e = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      var v = attrs[k];
+      if (v == null || v === false) return;
+      if (k === 'html') e.innerHTML = v;
+      else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), v);
+      else if (k === 'text') e.textContent = v;
+      else e.setAttribute(k, v === true ? '' : v);
+    });
+    (kids || []).forEach(function (c) { if (c == null) return; e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return e;
+  }
+  function chip(store, sm) { return h('span', { class: 'chip ' + store + (sm ? ' sm' : ''), 'aria-hidden': 'true', text: store }); }
+  function fill(id, kids) { var s = $(id); s.textContent = ''; kids.forEach(function (k) { if (k) s.appendChild(k); }); return s; }
+
+  /* ---------- storage ---------- */
+  function loadJSON(key, dflt) { try { var v = JSON.parse(localStorage.getItem(key) || 'null'); return v || dflt; } catch (e) { return dflt; } }
+  function saveJSON(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); return true; } catch (e) { return false; } }
+  /* demo mode (link ending in #demo): its own prices and picks, seeded from DEMO_SCANS, so the real ones are never touched */
+  var DEMO = /^#demo$/i.test(location.hash);
+  if (DEMO) { PRICES_KEY = 'grocery.demo.prices.v1'; GroceryMatcher.useLog('grocery.demo.matchlog.v1'); $('cam').removeAttribute('capture'); }
+  window.addEventListener('hashchange', function () { if (/^#demo$/i.test(location.hash) !== DEMO) location.reload(); });
+  function demoPrices() {
+    var out = {}, now = Date.now();
+    DEMO_SCANS.forEach(function (d) {
+      var each = d.total / (d.qty || 1);
+      out[d.item] = out[d.item] || {};
+      out[d.item][d.store] = { store: d.store, each: each, total: d.total, qty: d.qty || 1, size: d.size, unit: unitPrice({ each: each }, d.size),
+        t: now - d.days * 86400000 - 3600000, prevEach: d.prev || null, prevT: d.prev ? now - (d.days + 14) * 86400000 : null };
+    });
+    return out;
+  }
+  function resetDemo() { prices = demoPrices(); saveJSON(PRICES_KEY, prices); saveJSON('grocery.demo.matchlog.v1', []); openGallery(); }
+  function exitDemo() { location.replace(location.pathname + location.search); }
+  var prices = loadJSON(PRICES_KEY, null) || (DEMO ? demoPrices() : {});
+
+  /* product photos from parts/photos.js (made by make_photos.py); striped placeholders where there is none yet */
+  function photo(src, cls) { return src ? h('img', { class: 'ph ' + cls, src: src, alt: '', 'aria-hidden': 'true', decoding: 'async' }) : h('span', { class: 'ph stripes ' + cls, 'aria-hidden': 'true' }); }
+  function catPhoto(cat) {
+    if (CAT_PHOTOS[cat]) return CAT_PHOTOS[cat];
+    var it = GROCERY_ITEMS.filter(function (i) { return i.cat === cat && ITEM_PHOTOS[i.id]; })[0];
+    return it ? ITEM_PHOTOS[it.id] : null;
+  }
+  function rec(itemId, store) { return prices[itemId] && prices[itemId][store] || null; }
+
+  /* ---------- formatting ---------- */
+  function cents(v) { return Math.round(v * 100) + '\u00a2'; }
+  function moneyOrCents(v) { return v < 1 ? cents(v) : money(v); }
+  function sizeText(s) { return s ? (+s.value.toFixed(3)) + ' ' + (s.unit === 'l' ? 'L' : s.unit) : null; }
+  function perShort(per) { return per === '100 g' ? '/100g' : '/L'; }
+  function unitText(u) { return money(u.v) + ' / ' + u.per; }
+  function daysAgo(t) { return Math.max(0, Math.floor((Date.now() - t) / 86400000)); }
+  function agoText(t) { var d = daysAgo(t); return d === 0 ? 'today' : d === 1 ? 'yesterday' : d + ' days ago'; }
+  function itemById(id) { for (var i = 0; i < GROCERY_ITEMS.length; i++) if (GROCERY_ITEMS[i].id === id) return GROCERY_ITEMS[i]; return null; }
+
+  /* compare two stored records: {winner: 'D'|'F'|'even', diff, per} or {mismatch} or null */
+  function compare(a, b) {
+    if (!a || !b || !a.unit || !b.unit) return null;
+    if (a.unit.per !== b.unit.per) return { mismatch: true };
+    var d = a.unit.v - b.unit.v;
+    if (Math.abs(d) < 0.005) return { winner: 'even', diff: 0, per: a.unit.per };
+    return { winner: d < 0 ? a.store : b.store, diff: Math.abs(d), per: a.unit.per };
+  }
+
+  /* ---------- navigation ---------- */
+  var SCREENS = ['s-home', 's-scan', 's-match', 's-gallery', 's-cat', 's-detail'];
+  var view = { cat: null, item: null };
+  function show(id) {
+    SCREENS.forEach(function (s) { $(s).hidden = s !== id; });
+    $(id).scrollTop = 0;
+  }
+  function goHome() { scan = null; pick = null; closeFix(); show('s-home'); }
+
+  /* swipe right anywhere on Home (away from the left edge, which Safari keeps for Back) opens the gallery */
+  (function () {
+    var x0 = null, y0 = 0;
+    $('s-home').addEventListener('touchstart', function (e) { var t = e.touches[0]; x0 = t.clientX > 30 ? t.clientX : null; y0 = t.clientY; }, { passive: true });
+    $('s-home').addEventListener('touchend', function (e) {
+      if (x0 == null) return;
+      var t = e.changedTouches[0], dx = t.clientX - x0, dy = Math.abs(t.clientY - y0);
+      if (dx > 70 && dy < 60) openGallery();
+      x0 = null;
+    }, { passive: true });
+  })();
+  $('openGallery').addEventListener('click', function () { openGallery(); });
+
+  /* ---------- engine ---------- */
+  var enginePromise = null;
+  function getEngine() {
+    if (engine) return Promise.resolve(engine);
+    if (!enginePromise) {
+      enginePromise = (window.__TEST_ENGINE ? Promise.resolve(window.__TEST_ENGINE) : Promise.race([makeTesseractEngine(), new Promise(function (_, rej) { setTimeout(function () { rej(new Error('timeout')); }, 45000); })]))
+        .then(function (e) { engine = e; return e; }, function (err) { log('engine failed: ' + (err && err.message || err)); enginePromise = null; throw err; });
+    }
+    return enginePromise;
+  }
+  getEngine().catch(function () {});
+
+  /* ---------- scanning ---------- */
+  var scan = null;     /* the scan being reviewed: {r, store, total, qty, size, item, guesses, conf, flags, ...} */
+  var pick = null;     /* gallery pick mode: {back: 'match'|'fix'} */
+  var rescanTarget = null;
+  var scanSeq = 0;
+
+  document.addEventListener('click', function (e) {
+    var l = e.target.closest && e.target.closest('label[for="cam"]');
+    if (!l) return;
+    rescanTarget = l.getAttribute('data-item') ? { item: l.getAttribute('data-item'), store: l.getAttribute('data-store') } : (l.getAttribute('data-scan') === 'retake' && scan ? scan.target : null);
+  });
+  $('cam').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (f) startScan(f);
+  });
+
+  function startScan(file) {
+    var seq = ++scanSeq, target = rescanTarget;
+    closeFix(); pick = null;
+    scan = { reading: true, target: target };
+    renderScan();
+    show('s-scan');
+    getEngine().then(function (eng) {
+      return analyse(file, eng).then(function (r) {
+        if (seq !== scanSeq) return;
+        scan = fromResult(r, target);
+        if (scan.unread) { renderScan(); return; }
+        if (!target && scan.conf === 'none') { renderMatch(); show('s-match'); return; }
+        renderScan();
+      });
+    }, function () {
+      if (seq !== scanSeq) return;
+      scan = { offline: true, target: target };
+      renderScan();
+    }).catch(function (err) {
+      log('read failed: ' + (err && err.message || err));
+      if (seq !== scanSeq) return;
+      scan = { unread: true, target: target };
+      renderScan();
+    });
+  }
+
+  function fromResult(r, target) {
+    var s = { r: r, target: target, store: r.store === 'D' ? 'D' : 'F', detectedStore: r.store === 'D' ? 'D' : 'F', flags: r.flags.slice(),
+      total: r.price ? r.price.total : null, qty: r.price ? r.price.qty || 1 : 1, size: r.size ? { value: r.size.value, unit: r.size.unit } : null,
+      sizeRaw: r.size ? r.size.raw : null, itemText: r.item || '' };
+    var snapped = null;
+    s.flags.forEach(function (f) { if (/^snapped from /.test(f)) snapped = f.replace('snapped from ', ''); });
+    s.snappedFrom = snapped;
+    s.unread = !r.price && !r.size && !r.partialPrice;
+    var m = GroceryMatcher.match(s.itemText, s.size);
+    s.guesses = m.guesses; s.conf = m.confidence;
+    s.item = target ? target.item : (m.confidence === 'none' ? null : m.guesses[0].id);
+    if (target) s.store = target.store;
+    return s;
+  }
+  function scanEach(s) { return s.total != null ? s.total / (s.qty || 1) : null; }
+  function scanUnit(s) { var e = scanEach(s); return e != null && s.size ? unitPrice({ each: e }, s.size) : null; }
+  function scanReady(s) { return s && !s.reading && !s.unread && !s.offline && s.item && scanEach(s) != null && s.size && s.size.value > 0; }
+
+  function row(k, v, cls) { return h('div', { class: 'trow' + (cls ? ' ' + cls : '') }, [h('span', { class: 'k', text: k }), v]); }
+  function dash() { return h('span', { class: 'v none', html: '&mdash;' }); }
+  function skel(w) { return h('span', { class: 'sk', style: 'width:' + w + 'px', 'aria-hidden': 'true' }); }
+
+  function renderScan() {
+    var s = scan, kids = [], title, table, box, ready = scanReady(s);
+    var closeBtn = h('button', { class: 'xbtn', type: 'button', 'aria-label': s.reading ? 'Cancel' : 'Close', html: ICON.x, onclick: function () { scanSeq++; goHome(); } });
+    if (s.reading || s.offline || s.unread) {
+      title = s.reading ? 'Reading tag\u2026' : s.offline ? 'Reader not ready' : "Couldn't read tag";
+      var rows = [['Store', 120], ['Item', 150], ['Size', 70], ['Shelf price', 80], ['Unit price', 100]];
+      table = h('div', { class: 'table' }, rows.map(function (p) { return row(p[0], s.reading ? skel(p[1]) : s.unread ? dash() : h('span', { class: 'sk', style: 'width:' + p[1] + 'px;animation:none' })); }).concat([h('div', { class: 'spacer17', 'aria-hidden': 'true' })]));
+      box = s.reading ? h('div', { class: 'verdict skel', 'aria-hidden': 'true' })
+        : s.offline ? h('div', { class: 'verdict dash' }, [h('span', { html: ICON.signal }), h('div', null, [h('span', { class: 't', text: 'No signal' }), h('span', { class: 's', text: 'The reader needs a connection the first time it starts. Retake once you have signal.' })])])
+        : h('div', { class: 'verdict dash' }, [h('span', { html: ICON.tag }), h('div', null, [h('span', { class: 't', text: 'Nothing to save yet' }), h('span', { class: 's', text: 'Fill the frame with the shelf label, hold steady, and tap again.' })])]);
+    } else {
+      var it = itemById(s.item), old = rec(s.item, s.store), u = scanUnit(s), e = scanEach(s);
+      title = old ? 'Update price' : 'New price';
+      var sub = old ? 'Replaces ' + money(old.each) + ', ' + (daysAgo(old.t) === 0 ? 'scanned today' : agoText(old.t))
+        : s.snappedFrom && s.store === 'D' ? 'Read ' + s.snappedFrom + ', rounded to quarters'
+        : s.qty > 1 && s.total != null ? s.qty + ' for ' + money(s.total) : null;
+      var priceV = e == null ? dash() : sub ? h('span', { class: 'pricev' }, [h('span', { class: 'v big', style: 'font-size:20px;font-family:var(--mono);font-weight:600', text: money(e) }), h('span', { class: 'sub', text: sub })])
+        : h('span', { class: 'v big', text: money(e) });
+      table = h('div', { class: 'table' }, [
+        row('Store', h('span', { class: 'v storev' }, [chip(s.store), STORES[s.store]])),
+        row('Item', h('button', { class: 'itemv', type: 'button', 'aria-label': 'Change item, currently ' + (it ? it.name : 'none'), onclick: function () { renderMatch(); show('s-match'); } },
+          [h('span', { text: it ? it.name : 'Pick item' }), h('i', { html: ICON.chevSm, 'aria-hidden': 'true' })])),
+        row('Size', s.size ? h('span', { class: 'v num', text: sizeText(s.size) }) : dash()),
+        row('Shelf price', priceV, sub ? 'tall' : null),
+        row('Unit price', u ? h('span', { class: 'v big', text: unitText(u) }) : dash()),
+        sub ? null : h('div', { class: 'spacer17', 'aria-hidden': 'true' })
+      ]);
+      box = verdictBox(s, u);
+    }
+    kids.push(h('div', { class: 'topbar' }, [closeBtn, h('h1', { class: 'disp', text: title })]));
+    kids.push(table, box);
+    kids.push(h('div', { class: 'btnrow' }, [
+      h('label', { class: 'pill', for: 'cam', 'data-scan': 'retake', text: 'Retake' }),
+      h('button', { class: 'pill solid', type: 'button', disabled: !ready, text: 'Done', onclick: commitScan })
+    ]));
+    var canFix = !s.reading && !s.offline && !s.unread;
+    kids.push(h('button', { class: 'fixrow', type: 'button', 'aria-hidden': canFix ? null : 'true', tabindex: canFix ? null : '-1', text: 'Something wrong? Fix it', onclick: function () { if (canFix) openFix(); } }));
+    fill('s-scan', kids);
+  }
+
+  function verdictBox(s, u) {
+    var other = OTHER[s.store], o = rec(s.item, other);
+    function dashed(t, sub) { return h('div', { class: 'verdict dash' }, [h('div', null, [h('span', { class: 't', text: t }), h('span', { class: 's', text: sub })])]); }
+    if (scanEach(s) == null) return dashed('Price missing', s.r && s.r.partialPrice ? 'The price was cut off (read ' + s.r.partialPrice + '). Tap Fix it and type it from the tag.' : 'Tap Fix it below and type the price from the tag.');
+    if (!s.size) return dashed('Size missing', 'Tap Fix it below and type the size from the tag or package.');
+    if (!o) return dashed('Nothing to compare yet', 'Scan this at ' + STORES[other] + ' to see which is cheaper.');
+    var c = compare({ store: s.store, unit: u }, o);
+    if (c.mismatch) return dashed("Can't compare", STORES[other] + ' was priced per ' + o.unit.per + ', this tag per ' + u.per + '.');
+    var ov = unitText(o.unit);
+    if (c.winner === 'even') return h('div', { class: 'verdict even' }, [h('span', { class: 't', text: 'Same unit price' }), h('span', { class: 's', text: STORES[other] + ' was also ' + ov + ' when last scanned.' })]);
+    var here = c.winner === s.store;
+    return h('div', { class: 'verdict ' + c.winner }, [
+      h('span', { class: 't', text: STORES[c.winner] + ' is cheaper' }),
+      h('span', { class: 's', text: STORES[other] + ' was ' + ov + ' when last scanned. ' + (here ? 'You save ' + moneyOrCents(c.diff) + ' per ' + c.per + ' here.' : "It's " + moneyOrCents(c.diff) + ' less per ' + c.per + ' there.') })
+    ]);
+  }
+
+  function commitScan() {
+    var s = scan;
+    if (!scanReady(s)) return;
+    var e = scanEach(s), u = scanUnit(s), old = rec(s.item, s.store);
+    prices[s.item] = prices[s.item] || {};
+    prices[s.item][s.store] = { store: s.store, each: e, total: s.total, qty: s.qty, size: s.size, unit: u, t: Date.now(),
+      prevEach: old ? old.each : null, prevT: old ? old.t : null };
+    saveJSON(PRICES_KEY, prices);
+    GroceryMatcher.confirm(s.itemText, s.size, s.item, { store: s.store, price: e });
+    goHome();
+  }
+
+  /* ---------- which item? ---------- */
+  function renderMatch() {
+    var s = scan, e = scanEach(s);
+    var rows = (s.guesses || []).filter(function (g) { return g.id !== s.item; }).slice(0, 3).map(function (g) {
+      return h('button', { class: 'mrow', type: 'button', onclick: function () { assignItem(g.id); } },
+        [h('span', { style: 'display:flex;flex-direction:column;min-width:0' }, [h('span', { class: 'n', text: g.name }), h('span', { class: 'c', text: g.cat })]), h('i', { html: ICON.chev, 'aria-hidden': 'true' })]);
+    });
+    var none = s.conf === 'none' && !s.item;
+    var body = none ? [h('span', { class: 'lbl', text: 'Closest matches' }), h('div', { class: 'nomatch' }, [h('span', { class: 't disp', style: 'font-size:20px', text: 'No close match' }),
+      h('span', { style: 'font-size:15px;color:var(--body2)', text: 'Nothing we track looks like this tag. Pick the item from the list, or retake with the whole label in frame.' })])]
+      : [h('span', { class: 'lbl', text: 'Closest matches' })].concat(rows);
+    fill('s-match', [
+      h('div', { class: 'topbar' }, [h('button', { class: 'xbtn', type: 'button', 'aria-label': 'Cancel', html: ICON.x, onclick: function () { scanSeq++; goHome(); } }), h('h1', { class: 'disp', text: 'Which item?' })]),
+      h('div', { class: 'readbox' }, [chip(s.store), h('span', { class: 'm', text: e != null ? money(e) : '\u2014' }), h('span', { class: 'm', text: sizeText(s.size) || '\u2014' }), h('span', { class: 'note', text: 'Read from the tag' })]),
+      h('div', { class: 'matches' }, body),
+      h('button', { class: 'browse', type: 'button', text: 'Browse all 36 items', onclick: function () { pick = { back: 'match' }; openGallery(); } }),
+      h('div', { class: 'btnrow' }, [h('label', { class: 'pill', for: 'cam', 'data-scan': 'retake', text: 'Retake' }), h('button', { class: 'pill solid', type: 'button', disabled: true, text: 'Done' })]),
+      h('div', { style: 'height:44px;flex-shrink:0', 'aria-hidden': 'true' })
+    ]);
+  }
+  function assignItem(id) {
+    var toFix = matchFromFix && draft;
+    pick = null; matchFromFix = false;
+    if (toFix) { draft.item = id; show('s-scan'); $('fix').hidden = false; renderFix(); return; }
+    scan.item = id;
+    renderScan(); show('s-scan');
+  }
+
+  /* ---------- gallery, category, detail ---------- */
+  function openGallery() {
+    var cats = GroceryMatcher.categories();
+    $('s-gallery').hidden = false;
+    fill('s-gallery', [
+      h('div', { class: 'ghead' }, [h('button', { class: 'back', type: 'button', 'aria-label': pick ? 'Back to matches' : 'Back to home', html: ICON.back, onclick: function () {
+        if (pick) { pick = null; show('s-match'); } else show('s-home');
+      } }), pick ? h('span', { class: 'pick', text: 'Pick the item on this tag' }) : null]),
+      h('div', { class: 'ggrid' }, cats.map(function (c) {
+        return h('button', { class: 'gcard', type: 'button', 'aria-label': c.name, onclick: function () { openCat(c.name); } },
+          [photo(catPhoto(c.name), ''), h('span', { class: 'lb', text: c.name })]);
+      })),
+      pick ? null : DEMO ? h('div', { class: 'backup' }, [
+        h('button', { class: 'fixrow', type: 'button', text: 'Reset demo', onclick: resetDemo }),
+        h('button', { class: 'fixrow', type: 'button', text: 'Exit demo', onclick: exitDemo })
+      ]) : h('div', { class: 'backup' }, [
+        h('button', { class: 'fixrow', type: 'button', id: 'copyBackup', text: 'Copy backup', onclick: copyBackup }),
+        h('button', { class: 'fixrow', type: 'button', text: 'Restore', onclick: openRestore })
+      ])
+    ]);
+    show('s-gallery');
+  }
+  function openCat(name) {
+    view.cat = name;
+    var items = GROCERY_ITEMS.filter(function (it) { return it.cat === name; });
+    fill('s-cat', [
+      h('div', { class: 'chead' }, [h('button', { class: 'back', type: 'button', 'aria-label': 'Back to categories', html: ICON.back, onclick: openGallery }), h('h1', { text: CAT_TITLES[name] || name })]),
+      h('div', { class: 'cgrid' }, items.map(tile))
+    ]);
+    show('s-cat');
+  }
+  function tile(it) {
+    var d = rec(it.id, 'D'), f = rec(it.id, 'F'), c = compare(d, f), cls, shown = null;
+    if (d && f && c && !c.mismatch) { cls = 'both-' + c.winner; shown = c.winner === 'even' ? (d.t >= f.t ? d : f) : c.winner === 'D' ? d : f; }
+    else if (d || f) { shown = d && f ? (d.t >= f.t ? d : f) : d || f; cls = 'one-' + shown.store; }
+    else cls = 'none';
+    var label = it.name + (shown ? ', ' + money(shown.unit.v) + ' per ' + shown.unit.per + ' at ' + STORES[shown.store] : ', not scanned yet');
+    return h('button', { class: 'tile ' + cls, type: 'button', 'aria-label': label, onclick: function () { if (pick) assignItem(it.id); else openDetail(it.id); } }, [
+      photo(ITEM_PHOTOS[it.id], 'sm'),
+      h('span', { class: 'nm' }, [h('b', { text: it.name }), shown ? h('span', { text: sizeText(shown.size) }) : null]),
+      shown ? h('span', { class: 'pr' }, [chip(shown.store, true), h('span', { class: 'mono', text: money(shown.unit.v) + perShort(shown.unit.per) })]) : null
+    ]);
+  }
+  function openDetail(id) {
+    view.item = id;
+    var it = itemById(id), d = rec(id, 'D'), f = rec(id, 'F'), c = compare(d, f), v;
+    if (d && f && c && c.mismatch) v = h('div', { class: 'dverdict dash' }, [h('span', { class: 't', text: "Can't compare" }), h('span', { class: 's', text: 'One price is per 100 g, the other per L.' })]);
+    else if (d && f && c.winner === 'even') v = h('div', { class: 'dverdict even' }, [h('span', { class: 't', text: 'Same unit price' }), h('span', { class: 's', text: unitText(d.unit) + ' at both stores' })]);
+    else if (d && f) v = h('div', { class: 'dverdict ' + c.winner }, [h('span', { class: 't', text: STORES[c.winner] + ' is cheaper' }), h('span', { class: 's', text: moneyOrCents(c.diff) + ' less per ' + c.per })]);
+    else v = h('div', { class: 'dverdict dash' }, [h('span', { class: 't', text: 'Nothing to compare yet' }), h('span', { class: 's', text: 'Scan this at ' + (d ? 'Farm Boy' : f ? 'Dollarama' : 'both stores') + ' to see which is cheaper.' })]);
+    function card(store, r) {
+      var win = c && !c.mismatch && c.winner === store;
+      return h('div', { class: 'dcard' + (r ? (win ? ' win-' + store : '') : ' empty') }, [
+        h('span', { class: 'st' }, [chip(store, true), STORES[store]]),
+        h('div', { class: 'f' }, [h('span', { class: 'k', text: 'Unit price' }), r ? h('span', { class: 'up', html: '' }, [money(r.unit.v), h('small', { text: perShort(r.unit.per) })]) : h('span', { class: 'noup', text: 'No price yet' })]),
+        h('div', { class: 'f' }, [h('span', { class: 'k', text: 'Shelf price' }),
+          r ? h('span', { class: 'shelf', text: money(r.each) }) : h('span', { style: 'font-size:16px;color:var(--muted)', html: '&mdash;' }),
+          h('span', { class: 'k', html: r ? '' : '&nbsp;' }, r ? ['for ' + sizeText(r.size)] : [])]),
+        h('div', { class: 'foot' }, [
+          h('span', { class: 'when', text: r ? 'Scanned ' + agoText(r.t) : 'Not scanned yet' }),
+          h('label', { class: 'rescan' + (r ? '' : ' solid'), for: 'cam', 'data-item': id, 'data-store': store, html: ICON.cam(r ? '#15161A' : '#F4F1EA') + (r ? 'Rescan' : 'Scan') })
+        ])
+      ]);
+    }
+    fill('s-detail', [
+      h('div', { class: 'chead' }, [h('button', { class: 'back', type: 'button', 'aria-label': 'Back to ' + it.cat, html: ICON.back, onclick: function () { openCat(it.cat); } }), h('h1', { text: it.name })]),
+      v,
+      h('div', { class: 'dgrid' }, [card('D', d), card('F', f)])
+    ]);
+    show('s-detail');
+  }
+
+  /* ---------- Fix it ---------- */
+  var draft = null, matchFromFix = false;
+  function closeFix() { $('fix').hidden = true; draft = null; matchFromFix = false; }
+  function openFix() {
+    var s = scan;
+    draft = { store: s.store, qty: s.qty || 1, sizeVal: s.size ? String(+s.size.value.toFixed(3)) : '', unit: s.size ? s.size.unit : null, item: s.item,
+      priceText: s.total != null ? money(s.total) : '', storeTouched: false };
+    var ng = null;
+    s.flags.forEach(function (f) { if (/^nounit:/.test(f)) ng = f.slice(7); });
+    if (!s.size && ng) draft.sizeVal = String(ng).replace(/[^0-9.]/g, '');
+    renderFix();
+    $('fix').hidden = false;
+  }
+  function parseMoney(t) { var m = /(\d+(?:[.,]\d{0,2})?)/.exec(String(t).replace(/\s/g, '')); return m ? parseFloat(m[1].replace(',', '.')) : null; }
+  function draftSize() { var v = parseFloat(String(draft.sizeVal).replace(',', '.')); return v > 0 && draft.unit ? { value: v, unit: draft.unit } : null; }
+  function lastSize(itemId) { var r = rec(itemId, draft.store) || rec(itemId, OTHER[draft.store]); return r ? r.size : null; }
+  function hintKids(el, text, warn, extra) {
+    el.textContent = '';
+    el.classList.toggle('warn', !!warn);
+    if (warn) el.appendChild(h('span', { html: ICON.warn, style: 'flex:none;margin-top:1px' }));
+    el.appendChild(h('span', { text: text }));
+    if (extra) el.appendChild(extra);
+  }
+
+  /* builds the sheet; buttons rebuild it, typing only calls updateFix so the keyboard and caret stay put */
+  function renderFix() {
+    var it = itemById(draft.item), isD = draft.store === 'D';
+    function step(dir) {
+      var p = parseMoney(draft.priceText) || 0, st = isD ? 0.25 : 0.10;
+      p = isD ? Math.round((p + dir * st) * 4) / 4 : Math.round((p + dir * st) * 100) / 100;
+      draft.priceText = money(Math.max(0, p)); renderFix();
+    }
+    $('fixSheet').classList.add('split');
+    fill('fixSheet', [
+      h('div', { class: 'grab', 'aria-hidden': 'true' }),
+      h('div', { class: 'sbody', id: 'fxBody' }, [
+      h('div', { class: 'shead' }, [h('h1', { class: 'disp', text: 'Fix it' }),
+        h('button', { class: 'ilink', type: 'button', 'aria-label': 'Change item, currently ' + (it ? it.name : 'none'), onclick: function () { matchFromFix = true; renderMatch(); $('fix').hidden = true; show('s-match'); } },
+          [h('span', { text: it ? it.name : 'Pick item' }), h('i', { html: ICON.chevSm, 'aria-hidden': 'true' })])]),
+      h('div', { class: 'fgroup' }, [h('span', { class: 'lbl', text: 'Store' }),
+        h('div', { class: 'seg2', role: 'group', 'aria-label': 'Store' }, ['D', 'F'].map(function (st) {
+          return h('button', { class: 'storebtn ' + st, type: 'button', 'aria-pressed': draft.store === st ? 'true' : 'false', onclick: function () {
+            if (draft.store === st) return;
+            draft.store = st; draft.storeTouched = true;
+            var p = parseMoney(draft.priceText);
+            if (st === 'D' && p != null) draft.priceText = money(Math.round(p * 4) / 4);
+            renderFix();
+          } }, [chip(st), STORES[st]]);
+        })),
+        h('div', { class: 'hint', id: 'fxStoreHint' })]),
+      h('div', { class: 'fgroup' }, [h('label', { class: 'lbl', for: 'fxPrice', text: 'Price on the tag' }),
+        h('div', { style: 'display:flex;gap:8px' }, [
+          h('button', { class: 'stepbtn', type: 'button', 'aria-label': 'Decrease price', html: ICON.minus, onclick: function () { step(-1); } }),
+          h('input', { class: 'field', id: 'fxPrice', type: 'text', inputmode: 'decimal', autocomplete: 'off', placeholder: '$0.00', value: draft.priceText,
+            oninput: function (e) { draft.priceText = e.target.value; updateFix(); },
+            onblur: function (e) { var p = parseMoney(draft.priceText); if (p != null) { draft.priceText = money(p); e.target.value = draft.priceText; } updateFix(); } }),
+          h('button', { class: 'stepbtn', type: 'button', 'aria-label': 'Increase price', html: ICON.plus, onclick: function () { step(1); } })
+        ]),
+        h('div', { class: 'hint', id: 'fxPriceHint' })]),
+      h('div', { class: 'qtyrow' }, [h('span', { style: 'font-size:14px;color:var(--muted)', text: 'Items in this price' }),
+        h('div', { class: 'qty', role: 'group', 'aria-label': 'Items in this price' }, [1, 2, 3, 4].map(function (n) {
+          return h('button', { type: 'button', 'aria-pressed': draft.qty === n ? 'true' : 'false', 'aria-label': n + (n === 1 ? ' item' : ' items'), text: String(n), onclick: function () { draft.qty = n; renderFix(); } });
+        }))]),
+      h('div', { class: 'fgroup' }, [h('label', { class: 'lbl', for: 'fxSize', text: 'Size' }),
+        h('div', { style: 'display:flex;gap:8px' }, [
+          h('input', { class: 'field', id: 'fxSize', type: 'text', inputmode: 'decimal', autocomplete: 'off', placeholder: '0', value: draft.sizeVal,
+            oninput: function (e) { draft.sizeVal = e.target.value; updateFix(); } }),
+          h('div', { class: 'units', role: 'group', 'aria-label': 'Unit' }, [['g', 'g'], ['kg', 'kg'], ['ml', 'ml'], ['l', 'L']].map(function (p) {
+            return h('button', { type: 'button', 'aria-pressed': draft.unit === p[0] ? 'true' : 'false', text: p[1], onclick: function () { draft.unit = p[0]; renderFix(); } });
+          }))
+        ]),
+        h('div', { class: 'hint tall', id: 'fxSizeHint' })])
+      ]),
+      h('div', { class: 'btnrow' }, [
+        h('button', { class: 'pill', type: 'button', text: 'Cancel', onclick: closeFix }),
+        h('button', { class: 'pill solid', id: 'fxSave', type: 'button', text: 'Save', onclick: saveFix })
+      ])
+    ]);
+    updateFix();
+  }
+  function updateFix() {
+    var s = scan, price = parseMoney(draft.priceText), sz = draftSize(), isD = draft.store === 'D';
+    var quarter = price != null && Math.abs(price * 4 - Math.round(price * 4)) < 0.001;
+    hintKids($('fxStoreHint'), draft.storeTouched && draft.store !== s.detectedStore ? 'Changed from ' + STORES[s.detectedStore] + '.' + (isD ? ' Prices now go in 25\u00a2 steps.' : '')
+      : s.detectedStore === 'D' ? 'Yellow band and green arrow seen on the tag.' : 'No yellow band or green arrow seen, so Farm Boy.');
+
+    var pHint, pWarn = false;
+    if (price == null) { pWarn = true; pHint = s.r && s.r.partialPrice ? 'Price cut off at the photo edge (read ' + s.r.partialPrice + '). Type it from the tag.' : 'No price read. Type it from the tag.'; }
+    else if (draft.qty > 1) pHint = draft.qty + ' for ' + money(price) + ' is ' + money(price / draft.qty) + ' each. We store the price for one.';
+    else if (isD && s.snappedFrom && price === s.total && !draft.storeTouched) { pWarn = true; pHint = 'Read ' + s.snappedFrom + ". Dollarama prices are in quarters, so it's now " + money(price) + '.'; }
+    else if (isD) { pWarn = !quarter; pHint = 'Dollarama prices end in .00, .25, .50 or .75.'; }
+    else pHint = 'Tap the price to type it. + and \u2212 move 10\u00a2.';
+    hintKids($('fxPriceHint'), pHint, pWarn);
+    $('fxPrice').className = 'field' + (price == null ? ' empty' : '');
+
+    var sHint, sWarn = false, sizeCls = '', useBtn = null, ls = lastSize(draft.item), same = s.size && sz && sz.value === s.size.value && sz.unit === s.size.unit;
+    if (!String(draft.sizeVal).trim()) {
+      sWarn = true; sizeCls = ' empty';
+      sHint = s.r && /paper/.test(s.r.kind || '') ? 'No size on this Special! sign. Check the package.' : 'No size read. Type it from the tag or package.';
+    } else if (!draft.unit) {
+      sWarn = true; sizeCls = ' bad';
+      sHint = 'Read \u201c' + draft.sizeVal + '\u201d, which isn\u2019t a size.' + (ls ? ' Last scan was ' + sizeText(ls) + '.' : ' Pick g, kg, ml or L.');
+    } else if (same && s.flags.indexOf('fixedsize') >= 0) {
+      sWarn = true; sHint = 'Read \u201c' + s.sizeRaw + '\u201d roughly and corrected to ' + sizeText(s.size) + '. Check it against the tag.';
+    } else if (same && s.flags.indexOf('checksize') >= 0) {
+      sWarn = true; sHint = 'Size read only once, or the reads disagreed. Check it against the tag.';
+    } else sHint = same ? 'Read \u201c' + sizeText(s.size) + '\u201d from the tag.' : 'Typed by you.';
+    if (sWarn && ls && !(sz && sz.value === ls.value && sz.unit === ls.unit)) {
+      useBtn = h('button', { class: 'usebtn', type: 'button', text: 'Use ' + sizeText(ls), onclick: function () { draft.sizeVal = String(ls.value); draft.unit = ls.unit; renderFix(); } });
+    }
+    hintKids($('fxSizeHint'), sHint, sWarn, useBtn);
+    $('fxSize').className = 'field' + sizeCls;
+    $('fxSave').disabled = !(price != null && price > 0 && sz && draft.item);
+  }
+  function saveFix() {
+    var p = parseMoney(draft.priceText), sz = draftSize();
+    if (p == null || !sz || !draft.item) return;
+    scan.store = draft.store; scan.total = p; scan.qty = draft.qty; scan.size = sz; scan.item = draft.item;
+    closeFix(); renderScan();
+  }
+  $('fixScrim').addEventListener('click', closeFix);
+  /* the decimal keypad has no Return key: a tap anywhere off the field closes it, and a focused field scrolls into view */
+  $('fixSheet').addEventListener('touchstart', function (e) { var a = document.activeElement; if (a && a.tagName === 'INPUT' && e.target !== a) a.blur(); }, { passive: true });
+  $('fixSheet').addEventListener('focusin', function (e) { if (e.target.tagName === 'INPUT') setTimeout(function () { e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300); });
+
+  /* ---------- backup ---------- */
+  function copyBackup() {
+    var txt = JSON.stringify({ v: 1, prices: prices, matchlog: loadJSON('grocery.matchlog.v1', []) });
+    var b = $('copyBackup');
+    var done = function () { b.textContent = 'Backup copied'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function () { openRestore(txt); });
+    else openRestore(txt);
+  }
+  function openRestore(prefill) {
+    var msg = h('div', { class: 'hint', style: 'height:auto' }, [h('span', { text: prefill ? 'Copying was blocked. Select this text and copy it to keep a backup.' : 'Paste a backup you copied earlier. It replaces the prices and item picks on this phone.' })]);
+    var ta = h('textarea', { class: 'restore-ta', id: 'restoreText', 'aria-label': 'Backup text', spellcheck: 'false' });
+    if (typeof prefill === 'string') ta.value = prefill;
+    fill('restoreSheet', [
+      h('div', { class: 'grab', 'aria-hidden': 'true' }),
+      h('div', { class: 'shead' }, [h('h1', { class: 'disp', text: prefill ? 'Backup' : 'Restore' })]),
+      msg, ta,
+      h('div', { class: 'btnrow' }, [
+        h('button', { class: 'pill', type: 'button', text: prefill ? 'Close' : 'Cancel', onclick: function () { $('restore').hidden = true; } }),
+        prefill ? null : h('button', { class: 'pill solid', type: 'button', text: 'Restore', onclick: function () {
+          try {
+            var d = JSON.parse(ta.value);
+            if (!d || typeof d.prices !== 'object') throw new Error('no prices');
+            prices = d.prices; saveJSON(PRICES_KEY, prices);
+            if (Array.isArray(d.matchlog)) saveJSON('grocery.matchlog.v1', d.matchlog);
+            $('restore').hidden = true; openGallery();
+          } catch (err) { msg.firstChild.textContent = "That text isn't a backup from this app. Copy the whole backup and paste it again."; msg.className = 'hint warn'; }
+        } })
+      ])
+    ]);
+    $('restore').hidden = false;
+    if (typeof prefill === 'string') { ta.focus(); ta.select(); }
+  }
+  $('restoreScrim').addEventListener('click', function () { $('restore').hidden = true; });
+
+  show('s-home');
+
+})();
+</script>
+</body></html>

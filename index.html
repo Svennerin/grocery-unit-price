@@ -1395,9 +1395,10 @@ img.ph { display: block; object-fit: cover; background: var(--stripe1); }
   function loadJSON(key, dflt) { try { var v = JSON.parse(localStorage.getItem(key) || 'null'); return v || dflt; } catch (e) { return dflt; } }
   function saveJSON(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); return true; } catch (e) { return false; } }
   /* demo mode (link ending in #demo): its own prices and picks, seeded from DEMO_SCANS, so the real ones are never touched */
-  var DEMO = /^#demo$/i.test(location.hash);
+  var DEMO_PATH = /\/demo\/(index\.html)?$/i.test(location.pathname);  /* the demo/ copy, so a Home Screen icon can open straight into demo mode */
+  var DEMO = DEMO_PATH || /^#demo$/i.test(location.hash);
   if (DEMO) { PRICES_KEY = 'grocery.demo.prices.v1'; GroceryMatcher.useLog('grocery.demo.matchlog.v1'); $('cam').removeAttribute('capture'); }
-  window.addEventListener('hashchange', function () { if (/^#demo$/i.test(location.hash) !== DEMO) location.reload(); });
+  window.addEventListener('hashchange', function () { if (!DEMO_PATH && /^#demo$/i.test(location.hash) !== DEMO) location.reload(); });
   function demoPrices() {
     var out = {}, now = Date.now();
     DEMO_SCANS.forEach(function (d) {
@@ -1409,7 +1410,7 @@ img.ph { display: block; object-fit: cover; background: var(--stripe1); }
     return out;
   }
   function resetDemo() { prices = demoPrices(); saveJSON(PRICES_KEY, prices); saveJSON('grocery.demo.matchlog.v1', []); openGallery(); }
-  function exitDemo() { location.replace(location.pathname + location.search); }
+  function exitDemo() { location.replace(DEMO_PATH ? '../' : location.pathname + location.search); }
   var prices = loadJSON(PRICES_KEY, null) || (DEMO ? demoPrices() : {});
 
   /* product photos from parts/photos.js (made by make_photos.py); striped placeholders where there is none yet */

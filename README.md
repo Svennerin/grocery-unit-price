@@ -6,3 +6,5 @@ works out which of 36 tracked items the tag is for, and shows which store is che
 
 - Runs entirely in the browser; prices stay on the phone.
 - Add `#demo` to the address for a demo with sample scans.
+
+Product photos from Pexels/Unsplash (all from Unsplash, see [photo_credits.md](photo_credits.md)).
